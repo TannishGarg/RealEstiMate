@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomePrice AI - Indian House Price Prediction</title>
+    <link rel="stylesheet" href="shared.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation (only visible when logged in) -->
+    <nav class="navbar" style="display: none;">
+        <div class="nav-container">
+            <a href="/" class="logo">🏠 HomePrice AI</a>
+            <ul class="nav-links">
+                <li><a href="/" class="active">Home</a></li>
+                <li><a href="/prediction.html">Predict</a></li>
+                <li><a href="/about.html">About</a></li>
+                <li><a href="/contact.html">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Predict Your Dream Home's Price</h1>
+            <p>AI-powered house price prediction for properties across India. Get accurate estimates in seconds.</p>
+            <div class="hero-buttons" id="heroButtons">
+                <a href="/login.html" class="btn btn-primary">Login</a>
+                <a href="/about.html" class="btn btn-secondary" style="background: rgba(255,255,255,0.2); color: white; border: 2px solid white;">Learn More</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="section">
+        <h2 class="section-title">Why Choose HomePrice AI?</h2>
+        <div class="card-grid">
+            <div class="card fade-in">
+                <h3>🎯 Accurate Predictions</h3>
+                <p>Our advanced machine learning models analyze multiple factors to provide accurate price predictions for your property.</p>
+            </div>
+            <div class="card fade-in">
+                <h3>⚡ Instant Results</h3>
+                <p>Get price estimates in seconds. No waiting, no hassle. Just enter your property details and get instant predictions.</p>
+            </div>
+            <div class="card fade-in">
+                <h3>🇮🇳 All India Coverage</h3>
+                <p>Covering properties across all major states and cities in India. Find prices for properties anywhere in the country.</p>
+            </div>
+            <div class="card fade-in">
+                <h3>📊 Comprehensive Analysis</h3>
+                <p>We consider location, size, amenities, nearby facilities, and many more factors for accurate predictions.</p>
+            </div>
+            <div class="card fade-in">
+                <h3>🔒 Secure & Private</h3>
+                <p>Your data is safe with us. We don't store your personal information or property details.</p>
+            </div>
+            <div class="card fade-in">
+                <h3>💡 Easy to Use</h3>
+                <p>Simple, intuitive interface. No technical knowledge required. Anyone can use our platform.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="section" style="background: var(--light-bg);">
+        <h2 class="section-title">How It Works</h2>
+        <div class="card-grid">
+            <div class="card">
+                <div style="font-size: 3rem; text-align: center; margin-bottom: 1rem;">1️⃣</div>
+                <h3 style="text-align: center;">Enter Details</h3>
+                <p style="text-align: center;">Fill in your property details including location, size, type, and amenities.</p>
+            </div>
+            <div class="card">
+                <div style="font-size: 3rem; text-align: center; margin-bottom: 1rem;">2️⃣</div>
+                <h3 style="text-align: center;">AI Analysis</h3>
+                <p style="text-align: center;">Our AI model analyzes your inputs using advanced machine learning algorithms.</p>
+            </div>
+            <div class="card">
+                <div style="font-size: 3rem; text-align: center; margin-bottom: 1rem;">3️⃣</div>
+                <h3 style="text-align: center;">Get Price</h3>
+                <p style="text-align: center;">Receive an accurate price prediction in Indian Rupees (Lakhs) instantly.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="section">
+        <div class="card" style="text-align: center; padding: 4rem 2rem;">
+            <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">Ready to Predict Your Home Price?</h2>
+            <p style="font-size: 1.2rem; margin-bottom: 2rem; color: var(--text-light);">Login to access our prediction tool and discover the estimated value of your property.</p>
+            <div id="ctaButtons" style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="/login.html" class="btn btn-primary" style="font-size: 1.2rem; padding: 1rem 2rem;">Login</a>
+                <a href="/about.html" class="btn btn-secondary" style="font-size: 1.2rem; padding: 1rem 2rem;">Learn More</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 HomePrice AI. All rights reserved.</p>
+        <p style="margin-top: 0.5rem; opacity: 0.8;">Powered by Machine Learning & AI</p>
+    </footer>
+
+    <script src="auth.js"></script>
+    <script>
+        // Update buttons based on login status
+        document.addEventListener('DOMContentLoaded', async function() {
+            const isLoggedIn = await window.authManager.checkAuth();
+            const heroButtons = document.getElementById('heroButtons');
+            const ctaButtons = document.getElementById('ctaButtons');
+            
+            if (isLoggedIn) {
+                // Update hero buttons
+                if (heroButtons) {
+                    heroButtons.innerHTML = `
+                        <a href="/prediction.html" class="btn btn-primary">Start Predicting</a>
+                        <a href="#" class="btn btn-secondary logout-btn" style="background: rgba(255,255,255,0.2); color: white; border: 2px solid white;">Logout</a>
+                    `;
+                    heroButtons.querySelector('.logout-btn').addEventListener('click', (e) => {
+                        e.preventDefault();
+                        window.authManager.handleLogout();
+                    });
+                }
+                
+                // Update CTA buttons
+                if (ctaButtons) {
+                    ctaButtons.innerHTML = `
+                        <a href="/prediction.html" class="btn btn-primary" style="font-size: 1.2rem; padding: 1rem 2rem;">Start Predicting</a>
+                        <a href="#" class="btn btn-secondary logout-btn" style="font-size: 1.2rem; padding: 1rem 2rem;">Logout</a>
+                    `;
+                    ctaButtons.querySelector('.logout-btn').addEventListener('click', (e) => {
+                        e.preventDefault();
+                        window.authManager.handleLogout();
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>

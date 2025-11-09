@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - HomePrice AI</title>
+    <link rel="stylesheet" href="shared.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation (only visible when logged in) -->
+    <nav class="navbar" style="display: none;">
+        <div class="nav-container">
+            <a href="/" class="logo">🏠 HomePrice AI</a>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/prediction.html">Predict</a></li>
+                <li><a href="/about.html">About</a></li>
+                <li><a href="/contact.html">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Login Section -->
+    <section class="section" style="min-height: 70vh; display: flex; align-items: center;">
+        <div class="form-container">
+            <h2 style="text-align: center; margin-bottom: 2rem; font-size: 2rem;">Welcome Back</h2>
+            <p style="text-align: center; margin-bottom: 2rem; color: var(--text-light);">Sign in to access advanced features</p>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required placeholder="your.email@example.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required placeholder="Enter your password">
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input type="checkbox" style="margin-right: 0.5rem; cursor: pointer;">
+                        <span style="font-weight: normal;">Remember me</span>
+                    </label>
+                    <a href="#" style="color: #667eea; text-decoration: none;">Forgot password?</a>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1rem;">Sign In</button>
+            </form>
+            
+            <div id="loginMessage" style="margin-top: 1rem; text-align: center;"></div>
+            
+            <p style="text-align: center; margin-top: 2rem; color: var(--text-light);">
+                Don't have an account? <a href="/prediction.html" style="color: #667eea; text-decoration: none; font-weight: 600;">Get Started Free</a>
+            </p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 HomePrice AI. All rights reserved.</p>
+    </footer>
+
+    <script src="auth.js"></script>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const messageDiv = document.getElementById('loginMessage');
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            if (!email || !password) {
+                messageDiv.innerHTML = '<div style="color: red; padding: 1rem; background: #f8d7da; border-radius: 8px;">Please fill in all fields.</div>';
+                return;
+            }
+            
+            // Disable button
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Signing in...';
+            
+            // Call login API
+            const result = await window.authManager.handleLogin(email, password);
+            
+            if (result.success) {
+                messageDiv.innerHTML = '<div style="color: green; padding: 1rem; background: #d4edda; border-radius: 8px;">Login successful! Redirecting...</div>';
+                // Update navbar
+                await window.authManager.updateNavbar();
+                // Redirect to prediction page
+                setTimeout(() => {
+                    window.location.href = '/prediction.html';
+                }, 1000);
+            } else {
+                messageDiv.innerHTML = `<div style="color: red; padding: 1rem; background: #f8d7da; border-radius: 8px;">${result.error || 'Login failed. Please try again.'}</div>`;
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Sign In';
+            }
+        });
+        
+        // Check if already logged in
+        document.addEventListener('DOMContentLoaded', async function() {
+            const isLoggedIn = await window.authManager.checkAuth();
+            if (isLoggedIn) {
+                window.location.href = '/prediction.html';
+            }
+        });
+    </script>
+</body>
+</html>
+

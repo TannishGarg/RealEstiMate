@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predict Price - HomePrice AI</title>
+    <link rel="stylesheet" href="shared.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation (only visible when logged in) -->
+    <nav class="navbar" style="display: none;">
+        <div class="nav-container">
+            <a href="/" class="logo">🏠 HomePrice AI</a>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/prediction.html" class="active">Predict</a></li>
+                <li><a href="/about.html">About</a></li>
+                <li><a href="/contact.html">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" style="padding: 3rem 2rem;">
+        <div class="hero-content">
+            <h1>House Price Prediction</h1>
+            <p>Enter your property details below to get an accurate price prediction</p>
+        </div>
+    </section>
+
+    <!-- Prediction Form Section -->
+    <section class="section">
+        <div class="form-container" style="max-width: 1200px;">
+            <form id="predictionForm">
+                <div class="form-grid">
+                    <!-- Location Fields -->
+                    <div class="form-group">
+                        <label for="State">State *</label>
+                        <select id="State" name="State" required>
+                            <option value="">Select State</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="City">City *</label>
+                        <select id="City" name="City" required disabled>
+                            <option value="">Select City</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Locality">Locality *</label>
+                        <select id="Locality" name="Locality" required disabled>
+                            <option value="">Select Locality</option>
+                        </select>
+                    </div>
+
+                    <!-- Property Details -->
+                    <div class="form-group">
+                        <label for="Property_Type">Property Type *</label>
+                        <select id="Property_Type" name="Property_Type" required>
+                            <option value="">Select Property Type</option>
+                            <option value="Apartment">Apartment</option>
+                            <option value="Independent House">Independent House</option>
+                            <option value="Villa">Villa</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="BHK">BHK *</label>
+                        <input type="number" id="BHK" name="BHK" min="1" max="10" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Size_in_SqFt">Size (SqFt) *</label>
+                        <input type="number" id="Size_in_SqFt" name="Size_in_SqFt" min="1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Furnished_Status">Furnished Status *</label>
+                        <select id="Furnished_Status" name="Furnished_Status" required>
+                            <option value="">Select Status</option>
+                            <option value="Furnished">Furnished</option>
+                            <option value="Semi-furnished">Semi-furnished</option>
+                            <option value="Unfurnished">Unfurnished</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Floor_No">Floor Number *</label>
+                        <input type="number" id="Floor_No" name="Floor_No" min="0" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Total_Floors">Total Floors *</label>
+                        <input type="number" id="Total_Floors" name="Total_Floors" min="1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Age_of_Property">Age of Property (Years) *</label>
+                        <input type="number" id="Age_of_Property" name="Age_of_Property" min="0" required>
+                    </div>
+
+                    <!-- Nearby Facilities -->
+                    <div class="form-group">
+                        <label for="Nearby_Schools">Nearby Schools *</label>
+                        <input type="number" id="Nearby_Schools" name="Nearby_Schools" min="0" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Nearby_Hospitals">Nearby Hospitals *</label>
+                        <input type="number" id="Nearby_Hospitals" name="Nearby_Hospitals" min="0" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Public_Transport_Accessibility">Public Transport Accessibility *</label>
+                        <select id="Public_Transport_Accessibility" name="Public_Transport_Accessibility" required>
+                            <option value="">Select Level</option>
+                            <option value="High">High</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Low">Low</option>
+                        </select>
+                    </div>
+
+                    <!-- Additional Features -->
+                    <div class="form-group">
+                        <label for="Parking_Space">Parking Space *</label>
+                        <select id="Parking_Space" name="Parking_Space" required>
+                            <option value="">Select</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Security">Security *</label>
+                        <select id="Security" name="Security" required>
+                            <option value="">Select</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Amenities">Amenities (comma-separated) *</label>
+                        <input type="text" id="Amenities" name="Amenities" 
+                               placeholder="e.g., Gym, Pool, Garden, Clubhouse" required>
+                        <small>Enter amenities separated by commas</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Facing">Facing *</label>
+                        <select id="Facing" name="Facing" required>
+                            <option value="">Select Direction</option>
+                            <option value="North">North</option>
+                            <option value="South">South</option>
+                            <option value="East">East</option>
+                            <option value="West">West</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Owner_Type">Owner Type *</label>
+                        <select id="Owner_Type" name="Owner_Type" required>
+                            <option value="">Select Type</option>
+                            <option value="Owner">Owner</option>
+                            <option value="Builder">Builder</option>
+                            <option value="Broker">Broker</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Availability_Status">Availability Status *</label>
+                        <select id="Availability_Status" name="Availability_Status" required>
+                            <option value="">Select Status</option>
+                            <option value="Ready_to_Move">Ready to Move</option>
+                            <option value="Under_Construction">Under Construction</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary submit-btn" style="width: 100%; padding: 1rem; font-size: 1.2rem; margin-top: 1rem;">Predict Price</button>
+            </form>
+
+            <div id="result" class="result-container"></div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 HomePrice AI. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Define API_BASE_URL once before loading other scripts
+        window.API_BASE_URL = 'http://localhost:5000/api';
+    </script>
+    <script src="auth.js"></script>
+    <script src="script.js"></script>
+    <script>
+        // Check authentication and show navbar, then initialize dropdowns
+        document.addEventListener('DOMContentLoaded', async function() {
+            const isLoggedIn = await window.authManager.checkAuth();
+            if (!isLoggedIn) {
+                // Redirect to login if not authenticated
+                window.location.href = '/login.html';
+                return;
+            }
+            // Show navbar and update buttons
+            await window.authManager.updateNavbar();
+            
+            // Initialize dropdowns after authentication check
+            // Wait a bit to ensure DOM and scripts are ready
+            setTimeout(() => {
+                console.log('Attempting to initialize prediction form...');
+                console.log('window.initializePrediction:', typeof window.initializePrediction);
+                console.log('loadStates:', typeof loadStates);
+                console.log('setupEventListeners:', typeof setupEventListeners);
+                
+                if (typeof window.initializePrediction === 'function') {
+                    console.log('Using window.initializePrediction');
+                    window.initializePrediction();
+                } else if (typeof initializePrediction === 'function') {
+                    console.log('Using initializePrediction');
+                    initializePrediction();
+                } else if (typeof loadStates === 'function' && typeof setupEventListeners === 'function') {
+                    console.log('Using fallback initialization (loadStates + setupEventListeners)');
+                    loadStates();
+                    setupEventListeners();
+                } else {
+                    console.error('Prediction initialization functions not available');
+                    console.log('Available functions:', Object.keys(window).filter(k => k.includes('init') || k.includes('load') || k.includes('setup')));
+                    // Try one more time after a longer delay
+                    setTimeout(() => {
+                        if (typeof loadStates === 'function') {
+                            console.log('Retrying initialization...');
+                            loadStates();
+                            if (typeof setupEventListeners === 'function') {
+                                setupEventListeners();
+                            }
+                        }
+                    }, 500);
+                }
+            }, 500);
+        });
+    </script>
+</body>
+</html>
+
