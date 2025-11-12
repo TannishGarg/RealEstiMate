@@ -1,18 +1,17 @@
-// firebase.js
+// frontend/firebase.js
 
+// Import Firebase core SDK and required services
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
 import {
   getAuth,
   setPersistence,
-  browserLocalPersistence,
-  onAuthStateChanged,
-  signOut
+  browserLocalPersistence
 } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
 import {
-  getFirestore,
-  serverTimestamp
+  getFirestore
 } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js";
 
+// ✅ Your Firebase configuration (from your console)
 const firebaseConfig = {
   apiKey: "AIzaSyAZ_pjoGEBjA8h-bkbwwG4u63NrFFW2Ghc",
   authDomain: "indian-house01.firebaseapp.com",
@@ -23,26 +22,12 @@ const firebaseConfig = {
   measurementId: "G-HCLY5Y9X22"
 };
 
-// Initialize Firebase
-export const app = initializeApp(firebaseConfig);
+// ✅ Initialize Firebase
+const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
-export const now = serverTimestamp;
 
-// Keep user logged in after refresh
+// Keep users logged in locally
 await setPersistence(auth, browserLocalPersistence);
 
-// Protect pages that require authentication
-export function guardPage(requireLogin = false, redirect = "login.html") {
-  onAuthStateChanged(auth, (user) => {
-    if (requireLogin && !user) {
-      window.location.href = redirect;
-    }
-  });
-}
-
-// Logout function
-export async function logout() {
-  await signOut(auth);
-  window.location.href = "login.html";
-}
+console.log("✅ Firebase connected successfully!");

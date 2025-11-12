@@ -144,7 +144,7 @@
         </div>
     </footer>
 
-    <script src="auth.js"></script>
+    <script type="module" src="auth.js"></script>
     <script>
         // Smooth scrolling for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -204,12 +204,13 @@
         // Define API_BASE_URL once before loading other scripts
         window.API_BASE_URL = 'http://localhost:5000/api';
     </script>
-    <script src="auth.js"></script>
+    <script type="module" src="auth.js"></script>
     <script>
         // Check authentication and update navbar (will hide on home page)
         document.addEventListener('DOMContentLoaded', async function() {
             await window.authManager.updateNavbar();
         });
     </script>
+    <script type="module" src="firebase.js"></script>
 </body>
 </html>

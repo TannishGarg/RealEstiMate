@@ -801,7 +801,7 @@
     justify-content: flex-start;
     padding: 2rem;
     position: relative;
-    padding-top: 6rem;
+    padding-top: 8rem;
 }
 
 .prediction-logo {
@@ -965,19 +965,27 @@
 }
 
 .prediction-result-card {
-    background: rgba(102, 126, 234, 0.3);
-    border: 1px solid rgba(102, 126, 234, 0.2);
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.15) 0%, rgba(41, 128, 185, 0.08) 100%);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(52, 152, 219, 0.25);
     border-radius: var(--border-radius-lg);
     padding: 2rem;
     text-align: center;
-    box-shadow: var(--shadow-md);
+    box-shadow: 0 8px 32px rgba(52, 152, 219, 0.12);
+    transition: all 0.3s ease;
+    animation: fadeInUp 0.6s ease;
+}
+
+.prediction-result-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(52, 152, 219, 0.18);
 }
 
 .prediction-result-title {
     font-family: 'Inter', sans-serif;
     font-size: 1.2rem;
     font-weight: 600;
-    color: #2c3e50;
+    color: #2980b9;
     margin-bottom: 1rem;
 }
 
@@ -988,13 +996,14 @@
     color: #2c3e50;
     margin-bottom: 0.5rem;
     line-height: 1.2;
+    text-shadow: 0 2px 4px rgba(52, 152, 219, 0.2);
 }
 
 .prediction-result-unit {
     font-family: 'Inter', sans-serif;
     font-size: 1rem;
-    color: var(--text-light);
-    font-weight: 400;
+    color: #3498db;
+    font-weight: 500;
 }
 
 /* Responsive Design for Prediction Page */

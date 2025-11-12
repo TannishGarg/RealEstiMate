@@ -35,7 +35,7 @@
                     <label for="email" class="login-label">Email</label>
                     <input 
                         type="email" 
-                        id="email" 
+                        id="liEmail" 
                         name="email" 
                         required 
                         placeholder="Enter your email"
@@ -47,7 +47,7 @@
                     <label for="password" class="login-label">Password</label>
                     <input 
                         type="password" 
-                        id="password" 
+                        id="liPassword" 
                         name="password" 
                         required 
                         placeholder="Enter your password"
@@ -64,7 +64,7 @@
                 </button>
             </form>
 
-            <div id="loginMessage" class="login-message"></div>
+            <div id="liError" class="login-message" style="color:red;"></div>
             
             <div class="login-options">
                 <span class="login-text">Don't have account?</span>
@@ -77,86 +77,8 @@
         </div>
     </div>
 
-    <script src="auth.js"></script>
-    <script>
-        // Check if already logged in
-        document.addEventListener('DOMContentLoaded', async function() {
-            // Wait a bit for authManager to be available
-            if (window.authManager) {
-                const isLoggedIn = await window.authManager.checkAuth();
-                if (isLoggedIn) {
-                    window.location.href = '/prediction.html';
-                }
-            } else {
-                // If authManager is not ready, wait for it
-                setTimeout(async function() {
-                    if (window.authManager) {
-                        const isLoggedIn = await window.authManager.checkAuth();
-                        if (isLoggedIn) {
-                            window.location.href = '/prediction.html';
-                        }
-                    }
-                }, 100);
-            }
-        });
-
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const messageDiv = document.getElementById('loginMessage');
-            const submitBtn = document.getElementById('loginBtn');
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            
-            // Clear previous messages
-            messageDiv.innerHTML = '';
-            messageDiv.className = 'login-message';
-            
-            if (!email || !password) {
-                messageDiv.innerHTML = 'Please fill in all fields';
-                messageDiv.classList.add('error');
-                return;
-            }
-            
-            // Disable button and show loading state
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Signing in...';
-            submitBtn.classList.add('loading');
-            
-            // Call login API
-            const result = await window.authManager.handleLogin(email, password);
-            
-            if (result.success) {
-                messageDiv.innerHTML = 'Login successful! Redirecting...';
-                messageDiv.classList.add('success');
-                // Update navbar
-                await window.authManager.updateNavbar();
-                // Redirect to prediction page
-                setTimeout(() => {
-                    window.location.href = '/prediction.html';
-                }, 1500);
-            } else {
-                messageDiv.innerHTML = result.error || 'Login failed. Please try again.';
-                messageDiv.classList.add('error');
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Login';
-                submitBtn.classList.remove('loading');
-            }
-        });
-
-        // Handle link clicks
-        document.querySelectorAll('.login-link').forEach(link => {
-            link.addEventListener('click', function(e) {
-                if (this.textContent.includes('Forgot')) {
-                    e.preventDefault();
-                    // Show forgot password message
-                    const messageDiv = document.getElementById('loginMessage');
-                    messageDiv.innerHTML = 'Password reset functionality coming soon';
-                    messageDiv.className = 'login-message info';
-                }
-            });
-        });
-    </script>
-    <script type="module" src = "test-module.js"></script>
+        <script type="module" src="firebase.js"></script>
+    <script type="module" src="auth.js"></script>
 </body>
 </html>
 
