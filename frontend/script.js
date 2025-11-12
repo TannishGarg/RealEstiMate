@@ -207,8 +207,22 @@ async function predictPrice() {
         submitBtn.textContent = 'Predicting...';
     }
     if (resultDiv) {
-        resultDiv.className = 'result-container show loading';
-        resultDiv.innerHTML = '<div class="loading">Predicting price</div>';
+        resultDiv.classList.remove('show');
+        resultDiv.innerHTML = '';
+        
+        // Show loading indicator
+        setTimeout(() => {
+            resultDiv.innerHTML = `
+                <div class="prediction-result-card" style="background: linear-gradient(135deg, rgba(52, 152, 219, 0.08) 0%, rgba(41, 128, 185, 0.04) 100%); border: 1px solid rgba(52, 152, 219, 0.15);">
+                    <div class="prediction-result-title" style="color: #2980b9;">Predicting Price</div>
+                    <div class="prediction-result-value" style="color: #2980b9; font-size: 1.5rem;">
+                        <div style="display: inline-block; width: 20px; height: 20px; border: 2px solid #2980b9; border-top: 2px solid transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                    </div>
+                    <div class="prediction-result-unit" style="color: #2980b9;">Analyzing property details...</div>
+                </div>
+            `;
+            resultDiv.classList.add('show');
+        }, 100);
     }
     
     // Collect form data
@@ -258,16 +272,31 @@ async function predictPrice() {
 // Show success result
 function showSuccess(result) {
     const resultDiv = document.getElementById('result');
-    resultDiv.className = 'result-container show result-success';
     
     // Use 'prediction' from backend response
     const price = result.prediction || result.price || 0;
     
+    // Format price for display (convert to Lakhs/Crores if needed)
+    let formattedPrice = price;
+    let unit = 'Lakhs';
+    
+    if (price >= 100) {
+        formattedPrice = (price / 100).toFixed(2);
+        unit = 'Crores';
+    } else {
+        formattedPrice = price.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    }
+    
     resultDiv.innerHTML = `
-        <h2>🎉 Price Prediction</h2>
-        <div class="price">₹${price.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})} Lakhs</div>
-        <div class="message">${result.message || 'Prediction successful'}</div>
+        <div class="prediction-result-card">
+            <div class="prediction-result-title">Estimated Price</div>
+            <div class="prediction-result-value">₹${formattedPrice}</div>
+            <div class="prediction-result-unit">${unit}</div>
+        </div>
     `;
+    
+    // Show result with animation
+    resultDiv.classList.add('show');
     
     // Scroll to result
     resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -276,11 +305,17 @@ function showSuccess(result) {
 // Show error result
 function showError(message) {
     const resultDiv = document.getElementById('result');
-    resultDiv.className = 'result-container show result-error';
+    
     resultDiv.innerHTML = `
-        <h3>❌ Error</h3>
-        <div class="message">${message}</div>
+        <div class="prediction-result-card" style="background: linear-gradient(135deg, rgba(231, 76, 60, 0.08) 0%, rgba(192, 57, 43, 0.04) 100%); border: 1px solid rgba(231, 76, 60, 0.15);">
+            <div class="prediction-result-title" style="color: #c0392b;">Prediction Error</div>
+            <div class="prediction-result-value" style="color: #c0392b; font-size: 1.5rem;">❌</div>
+            <div class="prediction-result-unit" style="color: #c0392b;">${message}</div>
+        </div>
     `;
+    
+    // Show result with animation
+    resultDiv.classList.add('show');
     
     // Scroll to result
     resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });

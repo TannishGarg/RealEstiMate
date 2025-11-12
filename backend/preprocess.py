@@ -3,14 +3,6 @@ import numpy as np
 import joblib
 import os
 
-def count_amenities(amenities_str):
-    """Count number of amenities from comma-separated string"""
-    if pd.isna(amenities_str) or amenities_str == '':
-        return 0
-    if isinstance(amenities_str, str):
-        return len([a.strip() for a in amenities_str.split(',') if a.strip()])
-    return 0
-
 def preprocess_input(data_dict):
     """
     Preprocess user input to match training data format
@@ -30,11 +22,16 @@ def preprocess_input(data_dict):
     high_cardinality = joblib.load(os.path.join(model_dir, 'high_cardinality.pkl'))
     low_cardinality = joblib.load(os.path.join(model_dir, 'low_cardinality.pkl'))
     
-    # Process Amenities
-    if 'Amenities' in data_dict:
-        data_dict['Amenities_Count'] = count_amenities(data_dict['Amenities'])
-    elif 'Amenities_Count' not in data_dict:
-        data_dict['Amenities_Count'] = 0
+    # Amenities should already be a count at this point (processed in app.py)
+    # If it's still a string, convert it
+    if 'Amenities' in data_dict and isinstance(data_dict['Amenities'], str):
+        amenities_str = data_dict['Amenities']
+        if pd.isna(amenities_str) or amenities_str == '' or amenities_str == 'nan':
+            data_dict['Amenities'] = 0
+        else:
+            data_dict['Amenities'] = len([a.strip() for a in amenities_str.split(',') if a.strip()])
+    elif 'Amenities' not in data_dict:
+        data_dict['Amenities'] = 0
     
     # Create DataFrame with all required columns
     all_cols = numerical_cols + high_cardinality + low_cardinality

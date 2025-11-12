@@ -28,9 +28,11 @@ async function checkAuth() {
 async function updateNavbar() {
     const navbar = document.querySelector('.navbar');
     const isLoggedIn = await checkAuth();
+    const currentPage = window.location.pathname;
     
     if (navbar) {
-        if (isLoggedIn) {
+        // Hide navbar on home page even if logged in
+        if (isLoggedIn && !currentPage.includes('index.html') && currentPage !== '/') {
             navbar.style.display = 'block';
             updateNavbarButtons(isLoggedIn);
         } else {
@@ -109,6 +111,14 @@ async function handleLogout(e) {
     }
 }
 
+// Export functions for use in other scripts
+window.authManager = {
+    checkAuth,
+    handleLogin,
+    handleLogout,
+    updateNavbar
+};
+
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
     updateNavbar();
@@ -119,12 +129,4 @@ document.addEventListener('DOMContentLoaded', function() {
         logoutBtn.addEventListener('click', handleLogout);
     }
 });
-
-// Export functions for use in other scripts
-window.authManager = {
-    checkAuth,
-    handleLogin,
-    handleLogout,
-    updateNavbar
-};
 

@@ -4,7 +4,7 @@ import joblib
 import os
 import pandas as pd
 import numpy as np
-from preprocess_improved import preprocess_input, get_locations
+from preprocess import preprocess_input
 from datetime import timedelta
 
 # Get the project root directory
@@ -23,16 +23,16 @@ print(f"Looking for model in: {model_dir}")
 # List files in model directory for debugging
 print("Files in model directory:", os.listdir(model_dir))
 
-# Load the pipeline
-pipeline_path = os.path.join(model_dir, 'pipeline.pkl')
-print(f"Loading pipeline from: {pipeline_path}")
+# Load the model
+model_path = os.path.join(model_dir, 'model.pkl')
+print(f"Loading model from: {model_path}")
 
-if not os.path.exists(pipeline_path):
-    raise FileNotFoundError(f"Pipeline file not found at {pipeline_path}")
+if not os.path.exists(model_path):
+    raise FileNotFoundError(f"Model file not found at {model_path}")
 
 try:
-    model = joblib.load(pipeline_path)
-    print("Successfully loaded the model pipeline")
+    model = joblib.load(model_path)
+    print("Successfully loaded the model")
 except Exception as e:
     print(f"Error loading model: {str(e)}")
     raise
@@ -186,64 +186,37 @@ def predict():
             # Create a copy of the input data
             input_data = data.copy()
             
-            # Calculate Amenities_Count
+            # Normalize text formatting
+            # Normalize Availability_Status
+            if 'Availability_Status' in input_data:
+                input_data['Availability_Status'] = str(input_data['Availability_Status']).strip()
+                if input_data['Availability_Status'] in ['Ready To Move', 'Ready to Move', 'ready to move']:
+                    input_data['Availability_Status'] = 'Ready_to_Move'
+            
+            # Normalize Furnished_Status
+            if 'Furnished_Status' in input_data:
+                input_data['Furnished_Status'] = str(input_data['Furnished_Status']).strip()
+                if input_data['Furnished_Status'] in ['Semi-Furnished', 'Semi-furnished', 'semi-furnished', 'semi furnished']:
+                    input_data['Furnished_Status'] = 'Semi_Furnished'
+            
+            # Normalize yes/no values
+            for col in ['Parking_Space', 'Security']:
+                if col in input_data:
+                    val = str(input_data[col]).strip().lower()
+                    input_data[col] = 'Yes' if val in ['yes', 'y'] else 'No'
+            
+            # Calculate Amenities_Count from Amenities string
             amenities = input_data.get('Amenities', '')
-            input_data['Amenities_Count'] = len([a for a in str(amenities).split(',') if a.strip()])
+            if isinstance(amenities, str) and amenities.strip():
+                input_data['Amenities'] = len([a for a in amenities.split(',') if a.strip()])
+            else:
+                input_data['Amenities'] = 0
             
-            # Add Bathroom_Ratio (default to 1.0 if not provided)
-            input_data['Bathroom_Ratio'] = input_data.get('Bathroom_Ratio', 1.0)
-            
-            # Calculate a reasonable estimate for Price_per_SqFt based on BHK and location
-            bhk = input_data.get('BHK', 2)
-            location_factor = 1.0
-            
-            # Adjust location factor based on city (example values)
-            city = str(input_data.get('City', '')).lower()
-            if 'mumbai' in city:
-                location_factor = 1.5
-            elif 'delhi' in city or 'bangalore' in city:
-                location_factor = 1.2
-                
-            # Base price per sqft based on BHK (example values in INR)
-            base_price = {
-                1: 8000,
-                2: 10000,
-                3: 12000,
-                4: 14000,
-                5: 16000
-            }.get(int(bhk), 10000)  # Default to 10,000 if BHK not in range
-            
-            # Set Price_per_SqFt
-            input_data['Price_per_SqFt'] = base_price * location_factor
-            
-            # Ensure all required columns are present
-            required_columns = [
-                'State', 'City', 'Locality', 'Property_Type', 'BHK', 'Size_in_SqFt',
-                'Furnished_Status', 'Floor_No', 'Total_Floors', 'Age_of_Property',
-                'Nearby_Schools', 'Nearby_Hospitals', 'Public_Transport_Accessibility',
-                'Parking_Space', 'Security', 'Amenities_Count', 'Facing', 'Owner_Type',
-                'Availability_Status', 'Price_per_SqFt', 'Bathroom_Ratio'
-            ]
-            
-            # Add any missing columns with default values
-            for col in required_columns:
-                if col not in input_data:
-                    if col == 'Bathroom_Ratio':
-                        input_data[col] = 1.0  # Default bathroom ratio
-                    elif col == 'Amenities_Count':
-                        input_data[col] = 0
-                    elif col in ['State', 'City', 'Locality', 'Property_Type', 'Furnished_Status', 
-                               'Public_Transport_Accessibility', 'Parking_Space', 'Security', 
-                               'Facing', 'Owner_Type', 'Availability_Status']:
-                        input_data[col] = 'Unknown'
-                    else:
-                        input_data[col] = 0
-            
-            # Create DataFrame with columns in the correct order
-            input_df = pd.DataFrame([input_data])[required_columns]
+            # Use preprocess_input function to handle encoding
+            X = preprocess_input(input_data)
             
             # Make prediction using the model
-            prediction = model.predict(input_df)[0]
+            prediction = model.predict(X)[0]
             
             return jsonify({
                 'success': True,

@@ -3,15 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Us - HomePrice AI</title>
+    <title>About Us - RealEstiMate</title>
     <link rel="stylesheet" href="shared.css">
     <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- Navigation (only visible when logged in) -->
     <nav class="navbar" style="display: none;">
         <div class="nav-container">
-            <a href="/" class="logo">🏠 HomePrice AI</a>
+            <a href="/" class="logo">RealEstiMate</a>
             <ul class="nav-links">
                 <li><a href="/">Home</a></li>
                 <li><a href="/prediction.html">Predict</a></li>
@@ -21,116 +24,96 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="hero" style="padding: 4rem 2rem;">
-        <div class="hero-content">
-            <h1>About HomePrice AI</h1>
-            <p>Revolutionizing real estate price prediction with artificial intelligence</p>
-        </div>
-    </section>
+    <!-- Background with same aesthetic as prediction page -->
+    <div class="prediction-background">
+        <div class="background-overlay"></div>
+    </div>
 
-    <!-- About Content -->
-    <section class="section">
-        <div class="card" style="margin-bottom: 2rem;">
-            <h2 style="margin-bottom: 1rem; color: #667eea;">Our Mission</h2>
-            <p style="font-size: 1.1rem; line-height: 1.8; color: var(--text-light);">
-                At HomePrice AI, we believe that everyone deserves access to accurate property price information. 
-                Our mission is to democratize real estate data by providing free, instant, and reliable house price 
-                predictions using cutting-edge machine learning technology.
+    <!-- About Page Container -->
+    <div class="prediction-page-container">
+        <!-- Page Title -->
+        <div class="prediction-header">
+            <h2 class="prediction-title">About RealEstiMate</h2>
+            <p class="prediction-subtitle">Making property valuation simple, reliable, and transparent</p>
+        </div>
+
+        <!-- Intro Paragraph -->
+        <div class="about-intro">
+            <p class="about-intro-text">
+                RealEstiMate helps users get accurate house price predictions by using advanced Machine Learning models trained on real market data across Indian cities. Our goal is to make property valuation simple, reliable, and transparent.
             </p>
         </div>
 
-        <div class="card-grid">
-            <div class="card">
-                <h3>🤖 Advanced AI Technology</h3>
-                <p>We use state-of-the-art machine learning algorithms including Random Forest and Linear Regression models, 
-                trained on extensive datasets to provide accurate predictions.</p>
+        <!-- Mission/Vision/Problem/Approach Section -->
+        <div class="about-values-grid">
+            <div class="about-value-card">
+                <div class="about-value-icon">🎯</div>
+                <h3 class="about-value-title">Mission</h3>
+                <p class="about-value-description">
+                    To democratize real estate data by providing free, instant, and reliable house price predictions using cutting-edge machine learning technology.
+                </p>
             </div>
-            <div class="card">
-                <h3>📊 Data-Driven Insights</h3>
-                <p>Our models analyze multiple factors including location, property size, amenities, nearby facilities, 
-                and market trends to deliver comprehensive price estimates.</p>
-            </div>
-            <div class="card">
-                <h3>🎯 Accuracy First</h3>
-                <p>We continuously improve our models by training on large datasets and refining our algorithms to 
-                ensure the highest possible prediction accuracy.</p>
-            </div>
-        </div>
-    </section>
 
-    <!-- Technology Section -->
-    <section class="section" style="background: var(--light-bg);">
-        <h2 class="section-title">Our Technology Stack</h2>
-        <div class="card-grid">
-            <div class="card">
-                <h3>Python & Flask</h3>
-                <p>Robust backend infrastructure built with Python and Flask for reliable API services.</p>
+            <div class="about-value-card">
+                <div class="about-value-icon">👁️</div>
+                <h3 class="about-value-title">Vision</h3>
+                <p class="about-value-description">
+                    To become the most trusted platform for property valuation in India, empowering users with data-driven insights for informed real estate decisions.
+                </p>
             </div>
-            <div class="card">
-                <h3>Scikit-Learn</h3>
-                <p>Advanced machine learning models powered by scikit-learn for accurate predictions.</p>
-            </div>
-            <div class="card">
-                <h3>Modern Frontend</h3>
-                <p>Beautiful, responsive user interface built with HTML5, CSS3, and JavaScript.</p>
-            </div>
-            <div class="card">
-                <h3>Data Science</h3>
-                <p>Comprehensive data preprocessing, feature engineering, and model optimization.</p>
-            </div>
-        </div>
-    </section>
 
-    <!-- Features Highlight -->
-    <section class="section">
-        <h2 class="section-title">Key Features</h2>
-        <div style="max-width: 800px; margin: 0 auto;">
-            <div class="card" style="margin-bottom: 1rem;">
-                <h3 style="display: flex; align-items: center; gap: 1rem;">
-                    <span style="font-size: 2rem;">📍</span>
-                    <span>Location-Based Predictions</span>
-                </h3>
-                <p>Coverage across all major Indian states and cities with dynamic location filtering.</p>
+            <div class="about-value-card">
+                <div class="about-value-icon">💡</div>
+                <h3 class="about-value-title">The Problem We Solve</h3>
+                <p class="about-value-description">
+                    Traditional property valuation is complex, expensive, and time-consuming. We simplify this process with instant AI-powered predictions.
+                </p>
             </div>
-            <div class="card" style="margin-bottom: 1rem;">
-                <h3 style="display: flex; align-items: center; gap: 1rem;">
-                    <span style="font-size: 2rem;">🏗️</span>
-                    <span>Comprehensive Property Analysis</span>
-                </h3>
-                <p>Analyzes BHK, size, age, amenities, nearby facilities, and many more factors.</p>
-            </div>
-            <div class="card" style="margin-bottom: 1rem;">
-                <h3 style="display: flex; align-items: center; gap: 1rem;">
-                    <span style="font-size: 2rem;">⚡</span>
-                    <span>Instant Results</span>
-                </h3>
-                <p>Get price predictions in seconds with our optimized prediction pipeline.</p>
-            </div>
-            <div class="card">
-                <h3 style="display: flex; align-items: center; gap: 1rem;">
-                    <span style="font-size: 2rem;">🔒</span>
-                    <span>Privacy & Security</span>
-                </h3>
-                <p>Your data is processed securely and never stored. Complete privacy guaranteed.</p>
-            </div>
-        </div>
-    </section>
 
-    <!-- CTA -->
-    <section class="section">
-        <div class="card" style="text-align: center; padding: 3rem 2rem; background: var(--primary-gradient); color: white;">
-            <h2 style="color: white; margin-bottom: 1rem;">Ready to Get Started?</h2>
-            <p style="font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.95;">Try our prediction tool now and see how it works!</p>
-            <a href="/prediction.html" class="btn" style="background: white; color: #667eea; font-size: 1.2rem; padding: 1rem 2rem;">Try Prediction Tool</a>
+            <div class="about-value-card">
+                <div class="about-value-icon">🤖</div>
+                <h3 class="about-value-title">Our Approach</h3>
+                <p class="about-value-description">
+                    We use advanced AI-driven model training with comprehensive datasets covering location, amenities, market trends, and property features.
+                </p>
+            </div>
         </div>
-    </section>
+
+        <!-- Team Section -->
+        <div class="about-team-section">
+            <h3 class="about-team-title">Meet the Team</h3>
+            <div class="about-team-grid">
+                <div class="about-team-card">
+                    <div class="about-team-avatar">
+                        <div class="about-avatar-placeholder">TG</div>
+                    </div>
+                    <h4 class="about-team-name">Tannish Garg</h4>
+                    <p class="about-team-role">ML Engineer</p>
+                    <p class="about-team-role">Data Scientist</p>
+                </div>
+
+                <div class="about-team-card">
+                    <div class="about-team-avatar">
+                        <div class="about-avatar-placeholder">SG</div>
+                    </div>
+                    <h4 class="about-team-name">Shreya Goyal</h4>
+                    <p class="about-team-role">AI Researcher</p>
+                    <p class="about-team-role">Frontend Developer</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Footer -->
-    <footer class="footer">
-        <p>&copy; 2025 HomePrice AI. All rights reserved.</p>
+    <footer class="about-footer">
+        <p>&copy; 2025 RealEstiMate. All rights reserved.</p>
+        <p>Powered by Machine Learning & AI</p>
     </footer>
 
+    <script>
+        // Define API_BASE_URL once before loading other scripts
+        window.API_BASE_URL = 'http://localhost:5000/api';
+    </script>
     <script src="auth.js"></script>
     <script>
         // Check authentication and show navbar

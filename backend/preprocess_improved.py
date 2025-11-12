@@ -31,42 +31,12 @@ def preprocess_input(data_dict, model_dir=None):
         input_df = pd.DataFrame([data_dict])
         
         # Calculate derived features
-        # 1. Price_per_SqFt - Calculate using BHK and location
+        # 1. Bathroom - Calculate from BHK if not provided
         bhk = int(input_df.get('BHK', 2))
-        location_factor = 1.0
-        
-        # Adjust location factor based on city (example values)
-        city = str(input_df.get('City', '')).lower()
-        if 'mumbai' in city:
-            location_factor = 1.5
-        elif 'delhi' in city or 'bangalore' in city:
-            location_factor = 1.2
+        if 'Bathroom' not in input_df.columns or pd.isna(input_df['Bathroom'].iloc[0]):
+            input_df['Bathroom'] = bhk * 1.5
             
-        # Base price per sqft based on BHK (example values in INR)
-        base_price = {
-            1: 8000,
-            2: 10000,
-            3: 12000,
-            4: 14000,
-            5: 16000
-        }.get(bhk, 10000)  # Default to 10,000 if BHK not in range
-        
-        # Calculate and set Price_per_SqFt
-        price_per_sqft = base_price * location_factor
-        input_df['Price_per_SqFt'] = price_per_sqft
-        print(f"Calculated Price_per_SqFt: {price_per_sqft} for BHK: {bhk}, City: {city}")
-        print(f"Input DataFrame columns: {input_df.columns.tolist()}")
-        print(f"Input DataFrame dtypes: {input_df.dtypes}")
-        print(f"Input DataFrame values: \n{input_df}")
-        
-        # 2. Bathroom_Ratio - Calculate if we have BHK
-        if 'Bathroom' in input_df.columns and 'BHK' in input_df.columns:
-            input_df['Bathroom_Ratio'] = input_df['Bathroom'] / input_df['BHK']
-        else:
-            # Default to 1.0 if we can't calculate it
-            input_df['Bathroom_Ratio'] = 1.0
-        
-        # 3. Amenities_Count - Count number of amenities
+        # 2. Amenities_Count - Count number of amenities
         if 'Amenities' in input_df.columns:
             input_df['Amenities_Count'] = input_df['Amenities'].apply(
                 lambda x: len(str(x).split(',')) if pd.notna(x) and str(x).strip() else 0
@@ -80,15 +50,13 @@ def preprocess_input(data_dict, model_dir=None):
             'Furnished_Status', 'Floor_No', 'Total_Floors', 'Age_of_Property',
             'Nearby_Schools', 'Nearby_Hospitals', 'Public_Transport_Accessibility',
             'Parking_Space', 'Security', 'Amenities_Count', 'Facing', 'Owner_Type',
-            'Availability_Status', 'Price_per_SqFt', 'Bathroom_Ratio'
+            'Availability_Status'
         ]
         
         # Fill missing columns with appropriate defaults
         for col in required_columns:
             if col not in input_df.columns:
-                if col in ['Price_per_SqFt', 'Bathroom_Ratio']:
-                    input_df[col] = np.nan  # Will be filled by the pipeline's imputer
-                elif col == 'Amenities_Count':
+                if col == 'Amenities_Count':
                     input_df[col] = 0
                 elif input_df.dtypes.get(col) == 'object':
                     input_df[col] = 'Unknown'

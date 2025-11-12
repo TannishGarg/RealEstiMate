@@ -42,7 +42,7 @@ test_samples = [
         'Property_Type': 'Villa',
         'BHK': 4,
         'Size_in_SqFt': 3500,
-        'Furnished_Status': 'Semi-furnished',
+        'Furnished_Status': 'Semi_Furnished',
         'Floor_No': 2,
         'Total_Floors': 3,
         'Age_of_Property': 10,
@@ -54,7 +54,8 @@ test_samples = [
         'Amenities': 'Gym, Pool, Garden, Clubhouse',
         'Facing': 'East',
         'Owner_Type': 'Builder',
-        'Availability_Status': 'Under_Construction'
+        'Availability_Status': 'Under_Construction',
+        'Amenities': 'Gym, Pool, Garden, Clubhouse'
     },
     {
         'State': 'Delhi',
@@ -86,7 +87,22 @@ print("="*60)
 predictions = []
 for i, sample in enumerate(test_samples, 1):
     try:
-        X = preprocess_input(sample)
+        # Normalize the sample data
+        sample_copy = sample.copy()
+        
+        # Normalize Availability_Status
+        if sample_copy['Availability_Status'] in ['Ready To Move', 'Ready to Move']:
+            sample_copy['Availability_Status'] = 'Ready_to_Move'
+        
+        # Normalize Furnished_Status
+        if sample_copy['Furnished_Status'] in ['Semi-Furnished', 'Semi-furnished']:
+            sample_copy['Furnished_Status'] = 'Semi_Furnished'
+        
+        # Convert Amenities string to count
+        if 'Amenities' in sample_copy and isinstance(sample_copy['Amenities'], str):
+            sample_copy['Amenities'] = len([a for a in sample_copy['Amenities'].split(',') if a.strip()])
+        
+        X = preprocess_input(sample_copy)
         pred = model.predict(X)[0]
         predictions.append(pred)
         print(f"\nSample {i}:")
@@ -137,6 +153,22 @@ predicted_prices = []
 
 for idx, row in sample_df.iterrows():
     try:
+        # Normalize the data to match training format
+        availability = str(row['Availability_Status']).strip()
+        if availability in ['Ready To Move', 'Ready to Move', 'ready to move']:
+            availability = 'Ready_to_Move'
+        
+        furnished = str(row['Furnished_Status']).strip()
+        if furnished in ['Semi-Furnished', 'Semi-furnished', 'semi-furnished', 'semi furnished']:
+            furnished = 'Semi_Furnished'
+        
+        # Convert Amenities to count
+        amenities = row['Amenities']
+        if isinstance(amenities, str) and amenities.strip():
+            amenities_count = len([a for a in amenities.split(',') if a.strip()])
+        else:
+            amenities_count = 0
+        
         data_dict = {
             'State': row['State'],
             'City': row['City'],
@@ -144,7 +176,7 @@ for idx, row in sample_df.iterrows():
             'Property_Type': row['Property_Type'],
             'BHK': row['BHK'],
             'Size_in_SqFt': row['Size_in_SqFt'],
-            'Furnished_Status': row['Furnished_Status'],
+            'Furnished_Status': furnished,
             'Floor_No': row['Floor_No'],
             'Total_Floors': row['Total_Floors'],
             'Age_of_Property': row['Age_of_Property'],
@@ -153,10 +185,10 @@ for idx, row in sample_df.iterrows():
             'Public_Transport_Accessibility': row['Public_Transport_Accessibility'],
             'Parking_Space': row['Parking_Space'],
             'Security': row['Security'],
-            'Amenities': row['Amenities'],
+            'Amenities': amenities_count,
             'Facing': row['Facing'],
             'Owner_Type': row['Owner_Type'],
-            'Availability_Status': row['Availability_Status']
+            'Availability_Status': availability
         }
         
         X = preprocess_input(data_dict)

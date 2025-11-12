@@ -3,15 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Predict Price - HomePrice AI</title>
+    <title>Predict Price - RealEstiMate</title>
     <link rel="stylesheet" href="shared.css">
     <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- Navigation (only visible when logged in) -->
     <nav class="navbar" style="display: none;">
         <div class="nav-container">
-            <a href="/" class="logo">🏠 HomePrice AI</a>
+            <a href="/" class="logo">RealEstiMate</a>
             <ul class="nav-links">
                 <li><a href="/">Home</a></li>
                 <li><a href="/prediction.html" class="active">Predict</a></li>
@@ -21,45 +24,49 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="hero" style="padding: 3rem 2rem;">
-        <div class="hero-content">
-            <h1>House Price Prediction</h1>
-            <p>Enter your property details below to get an accurate price prediction</p>
-        </div>
-    </section>
+    <!-- Background with same aesthetic as login page -->
+    <div class="prediction-background">
+        <div class="background-overlay"></div>
+    </div>
 
-    <!-- Prediction Form Section -->
-    <section class="section">
-        <div class="form-container" style="max-width: 1200px;">
+    <!-- Prediction Page Container -->
+    <div class="prediction-page-container">
+        <!-- Page Title -->
+        <div class="prediction-header">
+            <h2 class="prediction-title">Predict House Price</h2>
+            <p class="prediction-subtitle">Enter your property details to get an accurate price prediction</p>
+        </div>
+
+        <!-- Prediction Form Card -->
+        <div class="prediction-card">
             <form id="predictionForm">
-                <div class="form-grid">
+                <div class="prediction-form-grid">
                     <!-- Location Fields -->
-                    <div class="form-group">
-                        <label for="State">State *</label>
-                        <select id="State" name="State" required>
+                    <div class="prediction-form-group">
+                        <label for="State" class="prediction-label">State</label>
+                        <select id="State" name="State" required class="prediction-input">
                             <option value="">Select State</option>
                         </select>
                     </div>
 
-                    <div class="form-group">
-                        <label for="City">City *</label>
-                        <select id="City" name="City" required disabled>
+                    <div class="prediction-form-group">
+                        <label for="City" class="prediction-label">City</label>
+                        <select id="City" name="City" required disabled class="prediction-input">
                             <option value="">Select City</option>
                         </select>
                     </div>
 
-                    <div class="form-group">
-                        <label for="Locality">Locality *</label>
-                        <select id="Locality" name="Locality" required disabled>
+                    <div class="prediction-form-group">
+                        <label for="Locality" class="prediction-label">Locality</label>
+                        <select id="Locality" name="Locality" required disabled class="prediction-input">
                             <option value="">Select Locality</option>
                         </select>
                     </div>
 
                     <!-- Property Details -->
-                    <div class="form-group">
-                        <label for="Property_Type">Property Type *</label>
-                        <select id="Property_Type" name="Property_Type" required>
+                    <div class="prediction-form-group">
+                        <label for="Property_Type" class="prediction-label">Property Type</label>
+                        <select id="Property_Type" name="Property_Type" required class="prediction-input">
                             <option value="">Select Property Type</option>
                             <option value="Apartment">Apartment</option>
                             <option value="Independent House">Independent House</option>
@@ -67,19 +74,19 @@
                         </select>
                     </div>
 
-                    <div class="form-group">
-                        <label for="BHK">BHK *</label>
-                        <input type="number" id="BHK" name="BHK" min="1" max="10" required>
+                    <div class="prediction-form-group">
+                        <label for="BHK" class="prediction-label">BHK</label>
+                        <input type="number" id="BHK" name="BHK" min="1" max="10" required class="prediction-input" placeholder="Number of bedrooms">
                     </div>
 
-                    <div class="form-group">
-                        <label for="Size_in_SqFt">Size (SqFt) *</label>
-                        <input type="number" id="Size_in_SqFt" name="Size_in_SqFt" min="1" required>
+                    <div class="prediction-form-group">
+                        <label for="Size_in_SqFt" class="prediction-label">Area (SqFt)</label>
+                        <input type="number" id="Size_in_SqFt" name="Size_in_SqFt" min="1" required class="prediction-input" placeholder="Size in square feet">
                     </div>
 
-                    <div class="form-group">
-                        <label for="Furnished_Status">Furnished Status *</label>
-                        <select id="Furnished_Status" name="Furnished_Status" required>
+                    <div class="prediction-form-group">
+                        <label for="Furnished_Status" class="prediction-label">Furnished Status</label>
+                        <select id="Furnished_Status" name="Furnished_Status" required class="prediction-input">
                             <option value="">Select Status</option>
                             <option value="Furnished">Furnished</option>
                             <option value="Semi-furnished">Semi-furnished</option>
@@ -87,35 +94,35 @@
                         </select>
                     </div>
 
-                    <div class="form-group">
-                        <label for="Floor_No">Floor Number *</label>
-                        <input type="number" id="Floor_No" name="Floor_No" min="0" required>
+                    <div class="prediction-form-group">
+                        <label for="Floor_No" class="prediction-label">Floor Number</label>
+                        <input type="number" id="Floor_No" name="Floor_No" min="0" required class="prediction-input" placeholder="Floor number">
                     </div>
 
-                    <div class="form-group">
-                        <label for="Total_Floors">Total Floors *</label>
-                        <input type="number" id="Total_Floors" name="Total_Floors" min="1" required>
+                    <div class="prediction-form-group">
+                        <label for="Total_Floors" class="prediction-label">Total Floors</label>
+                        <input type="number" id="Total_Floors" name="Total_Floors" min="1" required class="prediction-input" placeholder="Total floors in building">
                     </div>
 
-                    <div class="form-group">
-                        <label for="Age_of_Property">Age of Property (Years) *</label>
-                        <input type="number" id="Age_of_Property" name="Age_of_Property" min="0" required>
+                    <div class="prediction-form-group">
+                        <label for="Age_of_Property" class="prediction-label">Age of Property (Years)</label>
+                        <input type="number" id="Age_of_Property" name="Age_of_Property" min="0" required class="prediction-input" placeholder="Property age in years">
                     </div>
 
                     <!-- Nearby Facilities -->
-                    <div class="form-group">
-                        <label for="Nearby_Schools">Nearby Schools *</label>
-                        <input type="number" id="Nearby_Schools" name="Nearby_Schools" min="0" required>
+                    <div class="prediction-form-group">
+                        <label for="Nearby_Schools" class="prediction-label">Nearby Schools</label>
+                        <input type="number" id="Nearby_Schools" name="Nearby_Schools" min="0" required class="prediction-input" placeholder="Number of nearby schools">
                     </div>
 
-                    <div class="form-group">
-                        <label for="Nearby_Hospitals">Nearby Hospitals *</label>
-                        <input type="number" id="Nearby_Hospitals" name="Nearby_Hospitals" min="0" required>
+                    <div class="prediction-form-group">
+                        <label for="Nearby_Hospitals" class="prediction-label">Nearby Hospitals</label>
+                        <input type="number" id="Nearby_Hospitals" name="Nearby_Hospitals" min="0" required class="prediction-input" placeholder="Number of nearby hospitals">
                     </div>
 
-                    <div class="form-group">
-                        <label for="Public_Transport_Accessibility">Public Transport Accessibility *</label>
-                        <select id="Public_Transport_Accessibility" name="Public_Transport_Accessibility" required>
+                    <div class="prediction-form-group">
+                        <label for="Public_Transport_Accessibility" class="prediction-label">Public Transport Accessibility</label>
+                        <select id="Public_Transport_Accessibility" name="Public_Transport_Accessibility" required class="prediction-input">
                             <option value="">Select Level</option>
                             <option value="High">High</option>
                             <option value="Medium">Medium</option>
@@ -124,34 +131,39 @@
                     </div>
 
                     <!-- Additional Features -->
-                    <div class="form-group">
-                        <label for="Parking_Space">Parking Space *</label>
-                        <select id="Parking_Space" name="Parking_Space" required>
+                    <div class="prediction-form-group">
+                        <label for="Parking_Space" class="prediction-label">Parking Space</label>
+                        <select id="Parking_Space" name="Parking_Space" required class="prediction-input">
                             <option value="">Select</option>
                             <option value="Yes">Yes</option>
                             <option value="No">No</option>
                         </select>
                     </div>
 
-                    <div class="form-group">
-                        <label for="Security">Security *</label>
-                        <select id="Security" name="Security" required>
+                    <div class="prediction-form-group">
+                        <label for="Security" class="prediction-label">Security</label>
+                        <select id="Security" name="Security" required class="prediction-input">
                             <option value="">Select</option>
                             <option value="Yes">Yes</option>
                             <option value="No">No</option>
                         </select>
                     </div>
 
-                    <div class="form-group">
-                        <label for="Amenities">Amenities (comma-separated) *</label>
-                        <input type="text" id="Amenities" name="Amenities" 
-                               placeholder="e.g., Gym, Pool, Garden, Clubhouse" required>
-                        <small>Enter amenities separated by commas</small>
+                    <div class="prediction-form-group">
+                        <label for="Amenities" class="prediction-label">Amenities</label>
+                        <select id="Amenities" name="Amenities" required class="prediction-input">
+                            <option value="">Select Amenities Count</option>
+                            <option value="Club House">Club House</option>
+                            <option value="Gym">Gym</option>
+                            <option value="Playground">Playground</option>
+                            <option value="Pool">Pool</option>
+                            <option value="Garden">Garden</option>
+                        </select>
                     </div>
 
-                    <div class="form-group">
-                        <label for="Facing">Facing *</label>
-                        <select id="Facing" name="Facing" required>
+                    <div class="prediction-form-group">
+                        <label for="Facing" class="prediction-label">Facing</label>
+                        <select id="Facing" name="Facing" required class="prediction-input">
                             <option value="">Select Direction</option>
                             <option value="North">North</option>
                             <option value="South">South</option>
@@ -160,9 +172,9 @@
                         </select>
                     </div>
 
-                    <div class="form-group">
-                        <label for="Owner_Type">Owner Type *</label>
-                        <select id="Owner_Type" name="Owner_Type" required>
+                    <div class="prediction-form-group">
+                        <label for="Owner_Type" class="prediction-label">Owner Type</label>
+                        <select id="Owner_Type" name="Owner_Type" required class="prediction-input">
                             <option value="">Select Type</option>
                             <option value="Owner">Owner</option>
                             <option value="Builder">Builder</option>
@@ -170,9 +182,9 @@
                         </select>
                     </div>
 
-                    <div class="form-group">
-                        <label for="Availability_Status">Availability Status *</label>
-                        <select id="Availability_Status" name="Availability_Status" required>
+                    <div class="prediction-form-group">
+                        <label for="Availability_Status" class="prediction-label">Availability Status</label>
+                        <select id="Availability_Status" name="Availability_Status" required class="prediction-input">
                             <option value="">Select Status</option>
                             <option value="Ready_to_Move">Ready to Move</option>
                             <option value="Under_Construction">Under Construction</option>
@@ -180,17 +192,14 @@
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary submit-btn" style="width: 100%; padding: 1rem; font-size: 1.2rem; margin-top: 1rem;">Predict Price</button>
+                <button type="submit" class="prediction-btn" id="predictBtn">
+                    Predict Price
+                </button>
             </form>
 
-            <div id="result" class="result-container"></div>
+            <div id="result" class="prediction-result"></div>
         </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <p>&copy; 2025 HomePrice AI. All rights reserved.</p>
-    </footer>
+    </div>
 
     <script>
         // Define API_BASE_URL once before loading other scripts
