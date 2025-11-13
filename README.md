@@ -1,3 +1,4 @@
+
 # 🏠 RealEstiMate – Indian House Price Prediction
 
 A full-stack web application that predicts house prices in India using XGBoost machine learning, integrated with Firebase Authentication, Firestore database, and a Flask backend API.

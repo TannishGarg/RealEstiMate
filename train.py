@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
 from xgboost import XGBRegressor
-from sklearn.preprocessing import LabelEncoder, OneHotEncoder
+from category_encoders import TargetEncoder
 from sklearn.metrics import r2_score, mean_absolute_error
 import joblib
 import os
@@ -111,37 +111,22 @@ if X.isna().sum().sum() > 0:
     print(f"Warning: {X.isna().sum().sum()} NaN values remaining, filling with 0")
     X = X.fillna(0)
 
-# Encode categorical variables
-print("\n5. Encoding categorical variables...")
-label_encoders = {}
-X_encoded = X.copy()
+# Encode categorical variables using TargetEncoder
+print("\n5. Encoding categorical variables with TargetEncoder...")
 
-# Use LabelEncoder for high cardinality columns (State, City, Locality)
-high_cardinality = ['State', 'City', 'Locality']
-low_cardinality = [col for col in categorical_cols if col not in high_cardinality]
+# Define categorical columns for TargetEncoder
+cat_cols = [
+    'State', 'City', 'Locality', 'Property_Type', 'Furnished_Status',
+    'Public_Transport_Accessibility', 'Parking_Space', 'Security',
+    'Facing', 'Owner_Type', 'Availability_Status'
+]
 
-# Label encode high cardinality columns
-for col in high_cardinality:
-    le = LabelEncoder()
-    X_encoded[col] = le.fit_transform(X[col].astype(str))
-    label_encoders[col] = le
+# Initialize and fit TargetEncoder
+encoder = TargetEncoder(cols=cat_cols, smoothing=0.3)
+X_encoded = encoder.fit_transform(X, y)
 
-# OneHot encode low cardinality columns
-ohe = OneHotEncoder(drop='first', sparse_output=False, handle_unknown='ignore')
-X_categorical = X[low_cardinality]
-ohe.fit(X_categorical)
-X_ohe = ohe.transform(X_categorical)
-ohe_feature_names = ohe.get_feature_names_out(low_cardinality)
-
-# Combine encoded features
-numerical_and_encoded = X_encoded[numerical_cols + high_cardinality].values
-X_final_array = np.hstack([numerical_and_encoded, X_ohe])
-
-# Create DataFrame with proper column names
-X_final = pd.DataFrame(
-    X_final_array,
-    columns=list(numerical_cols + high_cardinality) + list(ohe_feature_names)
-)
+# TargetEncoder already handles all columns, so X_encoded is our final dataset
+X_final = X_encoded.copy()
 
 # Check for any infinite or NaN values
 if np.isinf(X_final.values).any() or np.isnan(X_final.values).any():
@@ -161,14 +146,21 @@ print(f"Train set: {len(X_train)} samples, Test set: {len(X_test)} samples")
 # Train model
 print("\n7. Training XGBRegressor...")
 model = XGBRegressor(
-    n_estimators=500,
-    learning_rate=0.05,
-    max_depth=8,
-    subsample=0.9,
-    colsample_bytree=0.9,
-    random_state=42,
-    objective='reg:squarederror'
+    n_estimators=2000,
+    learning_rate=0.015,
+    max_depth=12,
+    min_child_weight=1,
+    subsample=0.85,
+    colsample_bytree=0.85,
+    gamma=0.2,
+    reg_alpha=2,
+    reg_lambda=3,
+    objective='reg:squarederror',
+    tree_method="hist",
+    max_bin=256,
+    random_state=42
 )
+
 
 model.fit(X_train, y_train)
 
@@ -193,12 +185,9 @@ print("\n9. Saving model and preprocessing objects...")
 os.makedirs('model', exist_ok=True)
 
 joblib.dump(model, 'model/model.pkl')
-joblib.dump(label_encoders, 'model/label_encoders.pkl')
-joblib.dump(ohe, 'model/onehot_encoder.pkl')
+joblib.dump(encoder, 'model/target_encoder.pkl')
 joblib.dump(numerical_cols, 'model/numerical_cols.pkl')
-joblib.dump(high_cardinality, 'model/high_cardinality.pkl')
-joblib.dump(low_cardinality, 'model/low_cardinality.pkl')
-joblib.dump(ohe_feature_names, 'model/ohe_feature_names.pkl')
+joblib.dump(cat_cols, 'model/categorical_cols.pkl')
 
 # Save feature order for reference
 joblib.dump(FEATURE_ORDER, 'model/feature_order.pkl')

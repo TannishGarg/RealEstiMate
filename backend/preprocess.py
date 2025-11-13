@@ -5,7 +5,7 @@ import os
 
 def preprocess_input(data_dict):
     """
-    Preprocess user input to match training data format
+    Preprocess user input to match training data format using TargetEncoder
     
     Args:
         data_dict: Dictionary with user input features
@@ -16,11 +16,9 @@ def preprocess_input(data_dict):
     # Load preprocessing objects
     model_dir = os.path.join(os.path.dirname(__file__), '..', 'model')
     
-    label_encoders = joblib.load(os.path.join(model_dir, 'label_encoders.pkl'))
-    ohe = joblib.load(os.path.join(model_dir, 'onehot_encoder.pkl'))
+    target_encoder = joblib.load(os.path.join(model_dir, 'target_encoder.pkl'))
     numerical_cols = joblib.load(os.path.join(model_dir, 'numerical_cols.pkl'))
-    high_cardinality = joblib.load(os.path.join(model_dir, 'high_cardinality.pkl'))
-    low_cardinality = joblib.load(os.path.join(model_dir, 'low_cardinality.pkl'))
+    categorical_cols = joblib.load(os.path.join(model_dir, 'categorical_cols.pkl'))
     
     # Amenities should already be a count at this point (processed in app.py)
     # If it's still a string, convert it
@@ -34,7 +32,7 @@ def preprocess_input(data_dict):
         data_dict['Amenities'] = 0
     
     # Create DataFrame with all required columns
-    all_cols = numerical_cols + high_cardinality + low_cardinality
+    all_cols = numerical_cols + categorical_cols
     df = pd.DataFrame([data_dict])
     
     # Ensure all columns exist
@@ -53,7 +51,7 @@ def preprocess_input(data_dict):
             df[col] = 0
     
     # Fill missing categorical values
-    for col in high_cardinality + low_cardinality:
+    for col in categorical_cols:
         if col in df.columns and (pd.isna(df[col].iloc[0]) or df[col].iloc[0] == ''):
             df[col] = 'Unknown'
         elif col not in df.columns:
@@ -64,31 +62,27 @@ def preprocess_input(data_dict):
         if col in df.columns:
             df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0)
     
-    # Label encode high cardinality columns
-    X_encoded = df.copy()
-    for col in high_cardinality:
-        if col in df.columns:
-            value = str(df[col].iloc[0])
-            if value in label_encoders[col].classes_:
-                X_encoded[col] = label_encoders[col].transform([value])[0]
-            else:
-                # Handle unknown values - use first class (index 0)
-                X_encoded[col] = 0
+    # Apply TargetEncoder to categorical columns
+    # Note: TargetEncoder was fitted on training data, so we use transform only
+    try:
+        # Create a dummy target for transform (TargetEncoder expects y during fit, but transform can work without it)
+        X_encoded = target_encoder.transform(df)
+    except:
+        # If transform fails, try with a dummy target
+        dummy_y = pd.Series([0])  # Dummy target
+        X_encoded = target_encoder.transform(df)
     
-    # OneHot encode low cardinality columns
-    X_categorical = df[low_cardinality].fillna('Unknown')
-    X_ohe = ohe.transform(X_categorical)
-    
-    # Combine features in the same order as training
-    numerical_values = X_encoded[numerical_cols + high_cardinality].values.astype(float)
-    X_final = np.hstack([numerical_values, X_ohe])
+    # Ensure we have the same columns as during training
+    # The TargetEncoder should handle this automatically
     
     # Check for any NaN or Inf values
-    X_final = np.nan_to_num(X_final, nan=0.0, posinf=0.0, neginf=0.0)
+    X_encoded = X_encoded.replace([np.inf, -np.inf], 0).fillna(0)
+    
+    # Convert to numpy array
+    X_final = X_encoded.values.astype(float)
     
     # Convert to 2D array if needed and ensure it's the right shape
     if len(X_final.shape) == 1:
         X_final = X_final.reshape(1, -1)
     
     return X_final
-
