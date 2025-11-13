@@ -140,6 +140,34 @@ function setupEventListeners() {
         e.preventDefault();
         await predictPrice();
     });
+    
+    // Property type change handler for floor number logic
+    const propertyTypeSelect = document.getElementById('Property_Type');
+    const floorNoInput = document.getElementById('Floor_No');
+    
+    if (propertyTypeSelect && floorNoInput) {
+        // Function to handle floor number field state
+        function updateFloorNumberField() {
+            const propertyType = propertyTypeSelect.value;
+            
+            if (propertyType === 'Independent House' || propertyType === 'Villa') {
+                // Disable floor number for independent houses and villas
+                floorNoInput.disabled = true;
+                floorNoInput.value = '0'; // Set to ground floor
+                floorNoInput.placeholder = 'Ground floor (auto-set)';
+            } else {
+                // Enable floor number for apartments
+                floorNoInput.disabled = false;
+                floorNoInput.placeholder = 'Floor number';
+            }
+        }
+        
+        // Add event listener for property type changes
+        propertyTypeSelect.addEventListener('change', updateFloorNumberField);
+        
+        // Initialize on page load
+        updateFloorNumberField();
+    }
 }
 
 // Load cities for selected state
@@ -231,6 +259,18 @@ async function predictPrice() {
     
     for (const [key, value] of formData.entries()) {
         data[key] = value;
+    }
+    
+    // Ensure Floor_No is always included (even when disabled)
+    const floorNoElement = document.getElementById('Floor_No');
+    const propertyTypeElement = document.getElementById('Property_Type');
+    
+    if (propertyTypeElement && (propertyTypeElement.value === 'Independent House' || propertyTypeElement.value === 'Villa')) {
+        // For Independent House and Villa, set Floor_No to 0
+        data['Floor_No'] = '0';
+    } else if (floorNoElement && !data['Floor_No']) {
+        // For other types, include the Floor_No value if it exists
+        data['Floor_No'] = floorNoElement.value || '0';
     }
     
     // Convert numeric fields

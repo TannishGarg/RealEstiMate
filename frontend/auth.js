@@ -9,7 +9,9 @@ import {
   signOut,
   onAuthStateChanged,
   setPersistence,
-  browserLocalPersistence
+  browserLocalPersistence,
+  GoogleAuthProvider,
+  signInWithPopup
 } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
 
 // ------------------------------
@@ -252,6 +254,43 @@ async function handleLogout(e) {
     console.error("Logout error:", error);
     window.location.href = "/index.html";
   }
+}
+
+// ------------------------------
+// 🔹 Google Auth (Login + Signup)
+// ------------------------------
+const provider = new GoogleAuthProvider();
+
+// Google Login
+const googleLoginBtn = document.getElementById("googleLoginBtn");
+if (googleLoginBtn) {
+  googleLoginBtn.addEventListener("click", async (e) => {
+    e.preventDefault();
+    try {
+      await signInWithPopup(auth, provider);
+      showNotification("✅ Logged in with Google! Redirecting...", "success");
+      setTimeout(() => (window.location.href = "prediction.html"), 1500);
+    } catch (error) {
+      console.error("Google login error:", error);
+      alert("❌ Google Sign-In failed: " + error.message);
+    }
+  });
+}
+
+// Google Signup
+const googleSignupBtn = document.getElementById("googleSignupBtn");
+if (googleSignupBtn) {
+  googleSignupBtn.addEventListener("click", async (e) => {
+    e.preventDefault();
+    try {
+      await signInWithPopup(auth, provider);
+      showNotification("✅ Account created with Google! Redirecting...", "success");
+      setTimeout(() => (window.location.href = "prediction.html"), 1500);
+    } catch (error) {
+      console.error("Google signup error:", error);
+      alert("❌ Google Sign-Up failed: " + error.message);
+    }
+  });
 }
 
 // ------------------------------

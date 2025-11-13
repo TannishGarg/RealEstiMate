@@ -167,11 +167,15 @@ def predict():
         # Ensure required fields are present
         required_fields = [
             'State', 'City', 'Locality', 'Property_Type', 'BHK', 'Size_in_SqFt',
-            'Furnished_Status', 'Floor_No', 'Total_Floors', 'Age_of_Property',
+            'Furnished_Status', 'Total_Floors', 'Age_of_Property',
             'Nearby_Schools', 'Nearby_Hospitals', 'Public_Transport_Accessibility',
             'Parking_Space', 'Security', 'Amenities', 'Facing', 'Owner_Type',
             'Availability_Status'
         ]
+        
+        # Floor_No is only required for apartments
+        if data.get('Property_Type') not in ['Independent House', 'Villa']:
+            required_fields.append('Floor_No')
         
         missing_fields = [field for field in required_fields if field not in data]
         if missing_fields:
@@ -180,6 +184,10 @@ def predict():
                 'error': f'Missing required fields: {missing_fields}',
                 'message': 'Please provide all required fields'
             }), 400
+        
+        # Auto-set Floor_No to 0 for Independent House and Villa
+        if data.get('Property_Type') in ['Independent House', 'Villa']:
+            data['Floor_No'] = 0
         
         # Prepare features for prediction
         try:

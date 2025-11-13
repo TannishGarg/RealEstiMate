@@ -19,8 +19,9 @@ A full-stack web application that predicts house prices in India using machine l
 
 ### **Frontend**
 - **HTML5, CSS3, JavaScript** - Modern responsive web development
-- **Firebase Authentication** - Secure user authentication system
+- **Firebase Authentication** - Secure user authentication with Google Sign-In
 - **Firebase Firestore** - NoSQL database for contact form storage
+- **Google OAuth Integration** - One-click authentication with Google accounts
 - **Glassmorphism Design** - Modern UI with smooth animations
 - **Responsive Layout** - Mobile-first design approach
 
@@ -46,8 +47,10 @@ A full-stack web application that predicts house prices in India using machine l
 
 ### **👤 User Management**
 - **Firebase Authentication** - Secure signup/login/logout
+- **Google Sign-In** - One-click authentication with Google accounts
 - **Persistent Sessions** - Automatic login state management
 - **Smart Navigation** - Dynamic navbar updates based on auth status
+- **Unified Auth Flow** - Seamless integration between email and Google auth
 
 ### **🎨 User Experience**
 - **Modern UI Design** - Glassmorphism with smooth transitions
@@ -158,6 +161,7 @@ FireBase1/
 ### **Authentication Setup**
 Firebase Authentication handles all user management:
 - **Email/Password Authentication** - Secure user registration and login
+- **Google OAuth Integration** - One-click authentication with Google accounts
 - **Session Persistence** - Automatic login state preservation
 - **Error Handling** - Comprehensive error messages for user feedback
 
@@ -225,6 +229,28 @@ const firebaseConfig = {
 
 ---
 
+## 🔐 **Authentication System**
+
+### **🎯 Authentication Options**
+- **Email/Password** - Traditional registration and login
+- **Google Sign-In** - One-click authentication with Google OAuth
+- **Persistent Sessions** - Automatic login state preservation
+
+### **🔄 Authentication Flow**
+1. **Registration/Login** - Users can choose email or Google authentication
+2. **Session Management** - Firebase handles persistent login state
+3. **UI Updates** - Navbar and buttons dynamically update based on auth status
+4. **Protected Routes** - Automatic redirect for unauthenticated users
+5. **Logout** - Secure session termination with redirect to home
+
+### **🎨 UI Features**
+- **Modern Auth Buttons** - Styled Google Sign-In with official branding
+- **Divider Design** - Clean "OR" separator between auth options
+- **Error Handling** - User-friendly error messages and notifications
+- **Success Feedback** - Confirmation messages with smooth redirects
+
+---
+
 ## 💬 **Contact Form**
 
 ### **Functionality**
@@ -238,13 +264,39 @@ const firebaseConfig = {
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Contact messages collection
     match /contactMessages/{messageId} {
-      allow create: if request.auth != null;
-      allow read, write, delete: if false;
+      // Allow authenticated users to create messages
+      allow create: if request.auth != null 
+        && request.auth.uid != null
+        && request.resource.data.name is string
+        && request.resource.data.email is string
+        && request.resource.data.subject is string
+        && request.resource.data.message is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.email.size() > 0
+        && request.resource.data.subject.size() > 0
+        && request.resource.data.message.size() > 0;
+      
+      // Deny all other operations (read, update, delete)
+      allow read, update, delete: if false;
     }
   }
 }
 ```
+
+**Security Features:**
+- ✅ **Authentication Required**: Only logged-in users can send messages
+- ✅ **Data Validation**: Ensures all required fields are present and non-empty
+- ✅ **Write-Only Access**: Users cannot read, update, or delete messages
+- ✅ **Admin Control**: Only admins can access messages through Firebase Console
+
+**How to Apply Rules:**
+1. Go to [Firebase Console](https://console.firebase.google.com/)
+2. Select project: `indian-house01`
+3. Navigate to **Firestore Database** → **Rules** tab
+4. Replace existing rules with the code above
+5. Click **Publish**
 
 ---
 

@@ -97,8 +97,8 @@
                             <div class="contact-details">
                                 <div class="contact-info-label">Address</div>
                                 <div class="contact-info-value">
-                                    123 Tech Street<br>
-                                    Bangalore, Karnataka 560001<br>
+                                    Room - 201, Franklin B<br>
+                                    Chitkara University<br>
                                     India
                                 </div>
                             </div>
@@ -132,61 +132,8 @@
         window.API_BASE_URL = 'http://localhost:5000/api';
     </script>
     <script type="module" src="auth.js"></script>
-    <script>
-        // Check authentication and show navbar
-        document.addEventListener('DOMContentLoaded', async function() {
-            const isLoggedIn = await window.authManager.checkAuth();
-            if (!isLoggedIn) {
-                // Redirect to login if not authenticated
-                window.location.href = '/login.html';
-                return;
-            }
-            // Show navbar and update buttons
-            await window.authManager.updateNavbar();
-        });
-
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const messageDiv = document.getElementById('contactMessage');
-            const contactBtn = document.getElementById('contactBtn');
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const subject = document.getElementById('subject').value;
-            const message = document.getElementById('message').value;
-            
-            // Clear previous messages
-            messageDiv.innerHTML = '';
-            messageDiv.className = 'contact-result';
-            
-            if (name && email && subject && message) {
-                // Show loading state
-                contactBtn.disabled = true;
-                contactBtn.textContent = 'Sending...';
-                
-                // Simulate sending (in real app, this would be an API call)
-                setTimeout(() => {
-                    messageDiv.innerHTML = `
-                        <div class="contact-result-card success">
-                            <div class="contact-result-title">Message Sent</div>
-                            <div class="contact-result-message">Thank you! Your message has been sent. We'll get back to you soon.</div>
-                        </div>
-                    `;
-                    messageDiv.classList.add('show');
-                    document.getElementById('contactForm').reset();
-                    contactBtn.disabled = false;
-                    contactBtn.textContent = 'Send Message';
-                }, 1500);
-            } else {
-                messageDiv.innerHTML = `
-                    <div class="contact-result-card error">
-                        <div class="contact-result-title">Error</div>
-                        <div class="contact-result-message">Please fill in all fields.</div>
-                    </div>
-                `;
-                messageDiv.classList.add('show');
-            }
-        });
-    </script>
+    <script type="module" src="firebase.js"></script>
+    <script type="module" src="contact.js"></script>
 </body>
 </html>
 
