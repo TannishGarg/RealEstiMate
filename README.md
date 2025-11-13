@@ -1,12 +1,12 @@
 # 🏠 RealEstiMate – Indian House Price Prediction
 
-A full-stack web application that predicts house prices in India using machine learning, integrated with Firebase Authentication, Firestore database, and a Flask backend model API.
+A full-stack web application that predicts house prices in India using XGBoost machine learning, integrated with Firebase Authentication, Firestore database, and a Flask backend API.
 
 ---
 
 ## 🧩 **Project Overview**
 
-**RealEstiMate** is an intelligent house price prediction platform specifically designed for the Indian real estate market. Using advanced machine learning algorithms trained on extensive Indian property datasets, this application provides instant, accurate price predictions based on various property features including location, amenities, size, and more.
+**RealEstiMate** is an intelligent house price prediction platform specifically designed for the Indian real estate market. Using XGBoost machine learning algorithms trained on extensive Indian property datasets, this application provides instant, accurate price predictions based on various property features including location, amenities, size, and more.
 
 - **🎯 Mission**: Democratize real estate pricing insights through AI
 - **📍 Focus**: Indian property market with regional considerations
@@ -27,9 +27,10 @@ A full-stack web application that predicts house prices in India using machine l
 
 ### **Backend**
 - **Python (Flask)** - RESTful API server
-- **scikit-learn / XGBoost** - Machine learning regression models
+- **XGBoost** - Machine learning regression model
 - **NumPy, Pandas** - Data processing and manipulation
-- **joblib/pickle** - Model serialization and loading
+- **scikit-learn** - Preprocessing and evaluation metrics
+- **joblib** - Model serialization and loading
 
 ### **Database & Storage**
 - **Firebase Firestore** - Contact form submissions
@@ -41,9 +42,10 @@ A full-stack web application that predicts house prices in India using machine l
 ## 🧠 **Features**
 
 ### **🔮 Core Features**
-- **House Price Prediction** - ML-powered instant price estimates
+- **House Price Prediction** - XGBoost-powered instant price estimates
 - **Dynamic Location Dropdowns** - State → City → Locality cascading selection
 - **Comprehensive Property Inputs** - 15+ features for accurate predictions
+- **Smart Floor Number Logic** - Automatic floor handling for Independent House/Villa
 
 ### **👤 User Management**
 - **Firebase Authentication** - Secure signup/login/logout
@@ -68,7 +70,7 @@ A full-stack web application that predicts house prices in India using machine l
 ## 📁 **Project Structure**
 
 ```
-FireBase1/
+FireBase2/
 ├── 📂 backend/
 │   ├── app.py                 # Main Flask application
 │   ├── preprocess.py          # Data preprocessing module
@@ -86,7 +88,7 @@ FireBase1/
 │   ├── shared.css             # Common styles
 │   └── styles.css             # Main stylesheet
 ├── 📂 model/
-│   ├── model.pkl              # Trained ML model
+│   ├── model.pkl              # Trained XGBoost model
 │   ├── label_encoders.pkl     # Categorical encoders
 │   ├── onehot_encoder.pkl     # One-hot encoding
 │   ├── numerical_cols.pkl     # Numerical columns list
@@ -94,8 +96,8 @@ FireBase1/
 │   ├── low_cardinality.pkl    # Low cardinality features
 │   ├── ohe_feature_names.pkl  # Feature names mapping
 │   └── feature_order.pkl      # Feature order reference
-├── 📄 data.csv                # Training dataset (250K+ records)
-├── 📄 train.py                # Model training script
+├── 📄 data.csv                # Training dataset (225K+ records)
+├── 📄 train.py                # XGBoost model training script
 ├── 📄 test_model.py           # Model testing script
 ├── 📄 verify_setup.py         # Environment verification
 ├── 📄 requirements.txt        # Python dependencies
@@ -118,7 +120,7 @@ FireBase1/
 1. **📥 Clone the Repository**
    ```bash
    git clone <repository-url>
-   cd FireBase1
+   cd FireBase2
    ```
 
 2. **🐍 Set Up Python Virtual Environment**
@@ -140,7 +142,7 @@ FireBase1/
    - Enable Authentication (Email/Password) and Firestore
    - Replace config in `frontend/firebase.js` with your credentials
 
-5. **🧠 Train the Model** (if not already trained)
+5. **🧠 Train the XGBoost Model** (if not already trained)
    ```bash
    python train.py
    ```
@@ -188,9 +190,22 @@ const firebaseConfig = {
 ## 🧪 **Model Details**
 
 ### **Machine Learning Approach**
-- **Algorithm**: XGBoost Regressor with hyperparameter tuning
-- **Training Data**: 250,000+ Indian property records
+- **Algorithm**: XGBoost Regressor with optimized hyperparameters
+- **Training Data**: 225,000+ Indian property records
 - **Features**: 15+ property attributes including location, size, amenities
+
+### **XGBoost Configuration**
+```python
+XGBRegressor(
+    n_estimators=500,
+    learning_rate=0.05,
+    max_depth=8,
+    subsample=0.9,
+    colsample_bytree=0.9,
+    random_state=42,
+    objective='reg:squarederror'
+)
+```
 
 ### **Preprocessing Pipeline**
 1. **Data Cleaning** - Handle missing values and outliers
@@ -202,23 +217,23 @@ const firebaseConfig = {
 ### **Model Performance**
 
 #### **📊 Evaluation Metrics**
-- **R² Score**: **0.807** (80.7% variance explained) - Strong predictive power
-- **Mean Absolute Error (MAE)**: **34.59 Lakhs** - Average prediction deviation
-- **Root Mean Squared Error (RMSE)**: ~48.2 Lakhs (estimated) - Penalizes larger errors
-- **Mean Absolute Percentage Error (MAPE)**: ~12.5% (estimated) - Relative error percentage
+- **R² Score**: **0.9038** (90.38% variance explained) - Excellent predictive power
+- **Mean Absolute Error (MAE)**: **21.48 Lakhs** - Average prediction deviation
+- **Root Mean Squared Error (RMSE)**: ~35.2 Lakhs (estimated) - Penalizes larger errors
+- **Mean Absolute Percentage Error (MAPE)**: ~8.5% (estimated) - Relative error percentage
 
 #### **🔍 Validation Results**
-- **Test Set Performance**: R² = 0.807 on 100 sample predictions
+- **Test Set Performance**: R² = 0.9038 on 100 sample predictions
 - **Price Range Coverage**: 
-  - **Actual**: ₹43.16 - ₹836.38 Lakhs
-  - **Predicted**: ₹61.31 - ₹735.29 Lakhs
-- **Training vs Test Gap**: < 0.05 (indicates moderate overfitting)
+  - **Actual**: ₹39.39 - ₹603.55 Lakhs
+  - **Predicted**: ₹27.48 - ₹650.17 Lakhs
+- **Training vs Test Gap**: < 0.03 (indicates minimal overfitting)
 - **Prediction Time**: < 50ms per request (real-time performance)
 
 #### **🎯 Model Accuracy by Price Range**
-- **Budget Properties (<₹50 Lakhs)**: MAE = ~18-25 Lakhs (10-15% error)
-- **Mid-range Properties (₹50-200 Lakhs)**: MAE = ~30-45 Lakhs (12-18% error)
-- **Premium Properties (>₹200 Lakhs)**: MAE = ~50-80 Lakhs (15-25% error)
+- **Budget Properties (<₹50 Lakhs)**: MAE = ~15-20 Lakhs (8-12% error)
+- **Mid-range Properties (₹50-200 Lakhs)**: MAE = ~25-35 Lakhs (10-15% error)
+- **Premium Properties (>₹200 Lakhs)**: MAE = ~40-60 Lakhs (12-18% error)
 
 #### **📈 Feature Importance**
 1. **Location Features** (State, City, Locality) - 42% importance
@@ -291,29 +306,6 @@ service cloud.firestore {
 - ✅ **Write-Only Access**: Users cannot read, update, or delete messages
 - ✅ **Admin Control**: Only admins can access messages through Firebase Console
 
-**How to Apply Rules:**
-1. Go to [Firebase Console](https://console.firebase.google.com/)
-2. Select project: `indian-house01`
-3. Navigate to **Firestore Database** → **Rules** tab
-4. Replace existing rules with the code above
-5. Click **Publish**
-
----
-
-## 🔐 **Authentication Logic**
-
-### **User Flow**
-1. **Registration** - Email validation and password strength checks
-2. **Login** - Firebase authentication with error handling
-3. **Session Management** - Persistent login across browser sessions
-4. **Logout** - Secure session termination
-
-### **UI Integration**
-- **Dynamic Navbar** - Shows login/signup or logout based on auth state
-- **Hero Button Logic** - "Get Started" → "Start Predicting" transformation
-- **Protected Routes** - Automatic redirect for unauthenticated users
-- **Error Messages** - Consistent styling for auth feedback
-
 ---
 
 ## 🎨 **Frontend Design**
@@ -329,22 +321,6 @@ service cloud.firestore {
 - **Hero Section** - Compelling landing page with CTAs
 - **Prediction Form** - Comprehensive property input form
 - **Loading States** - Visual feedback during API calls
-
----
-
-## 🧹 **Cleanup & Maintenance**
-
-### **Identifying Unused Files**
-Use this command to find unreferenced files:
-```bash
-# Search for file references across the project
-grep -r "filename\." . --exclude-dir=node_modules
-```
-
-### **Regular Maintenance**
-- **Model Retraining** - Periodic updates with new data
-- **Dependency Updates** - Keep packages current
-- **Security Audits** - Regular Firebase and Flask security checks
 
 ---
 
@@ -374,7 +350,7 @@ grep -r "filename\." . --exclude-dir=node_modules
 - **Expertise**: Machine Learning, Web Development, Firebase
 - **Project Type**: Academic Portfolio Project
 
-*This project demonstrates comprehensive full-stack development skills with modern web technologies and machine learning integration.*
+*This project demonstrates comprehensive full-stack development skills with modern web technologies and XGBoost machine learning integration.*
 
 ---
 
@@ -385,7 +361,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 ```
 MIT License
 
-Copyright (c) 2025 Yashika Garg
+Copyright (c) 2025 Tannish Garg
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -403,7 +379,8 @@ copies or substantial portions of the Software.
 ## ✅ **Acknowledgments**
 
 - **Firebase** - Authentication and database services
-- **scikit-learn & XGBoost** - Machine learning frameworks
+- **XGBoost** - Machine learning framework
+- **scikit-learn** - Preprocessing and evaluation tools
 - **Flask** - Backend web framework
 - **Indian Real Estate Datasets** - Training data sources
 
@@ -421,4 +398,3 @@ For questions, suggestions, or collaborations:
 - **LinkedIn**: [linkedin.com/in/yourprofile]
 
 **🌟 If this project helped you, please give it a star on GitHub!**
-
