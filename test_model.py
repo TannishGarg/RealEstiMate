@@ -138,11 +138,9 @@ print("Testing Model Accuracy on Test Data")
 print("="*60)
 
 # Load preprocessing objects
-label_encoders = joblib.load('model/label_encoders.pkl')
-ohe = joblib.load('model/onehot_encoder.pkl')
+target_encoder = joblib.load('model/target_encoder.pkl')
 numerical_cols = joblib.load('model/numerical_cols.pkl')
-high_cardinality = joblib.load('model/high_cardinality.pkl')
-low_cardinality = joblib.load('model/low_cardinality.pkl')
+categorical_cols = joblib.load('model/categorical_cols.pkl')
 
 # Take a sample from actual data
 sample_df = df.sample(min(100, len(df)), random_state=42)
