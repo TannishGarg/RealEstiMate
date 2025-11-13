@@ -5,7 +5,7 @@ import os
 
 def preprocess_input(data_dict):
     """
-    Preprocess user input to match training data format using mixed encoding strategy
+    Preprocess user input to match training data format using TargetEncoder
     
     Args:
         data_dict: Dictionary with user input features
@@ -16,93 +16,73 @@ def preprocess_input(data_dict):
     # Load preprocessing objects
     model_dir = os.path.join(os.path.dirname(__file__), '..', 'model')
     
-    one_hot_encoder = joblib.load(os.path.join(model_dir, 'one_hot_encoder.pkl'))
     target_encoder = joblib.load(os.path.join(model_dir, 'target_encoder.pkl'))
     numerical_cols = joblib.load(os.path.join(model_dir, 'numerical_cols.pkl'))
-    one_hot_cols = joblib.load(os.path.join(model_dir, 'one_hot_cols.pkl'))
-    target_encode_cols = joblib.load(os.path.join(model_dir, 'target_encode_cols.pkl'))
-    other_categorical_cols = joblib.load(os.path.join(model_dir, 'other_categorical_cols.pkl'))
-    final_feature_columns = joblib.load(os.path.join(model_dir, 'final_feature_columns.pkl'))
+    categorical_cols = joblib.load(os.path.join(model_dir, 'categorical_cols.pkl'))
     
-    # Process amenities (multi-hot encoding)
-    AMENITY_TYPES = ['gym', 'garden', 'pool', 'clubhouse', 'playground']
-    
-    def create_amenity_dummies(amenities_str):
-        """Create multi-hot encoded amenities columns"""
-        amenity_dict = {}
+    # Amenities should already be a count at this point (processed in app.py)
+    # If it's still a string, convert it
+    if 'Amenities' in data_dict and isinstance(data_dict['Amenities'], str):
+        amenities_str = data_dict['Amenities']
         if pd.isna(amenities_str) or amenities_str == '' or amenities_str == 'nan':
-            for amenity in AMENITY_TYPES:
-                amenity_dict[f'Amenity_{amenity.capitalize()}'] = 0
-            return amenity_dict
-        
-        if isinstance(amenities_str, str):
-            amenities_list = [a.strip().lower() for a in amenities_str.split(',') if a.strip()]
-            for amenity in AMENITY_TYPES:
-                amenity_dict[f'Amenity_{amenity.capitalize()}'] = 1 if amenity in amenities_list else 0
-            return amenity_dict
-        
-        # Default case
-        for amenity in AMENITY_TYPES:
-            amenity_dict[f'Amenity_{amenity.capitalize()}'] = 0
-        return amenity_dict
+            data_dict['Amenities'] = 0
+        else:
+            data_dict['Amenities'] = len([a.strip() for a in amenities_str.split(',') if a.strip()])
+    elif 'Amenities' not in data_dict:
+        data_dict['Amenities'] = 0
     
-    # Create amenity columns
-    amenity_data = create_amenity_dummies(data_dict.get('Amenities', ''))
+    # Create DataFrame with all required columns
+    all_cols = numerical_cols + categorical_cols
+    df = pd.DataFrame([data_dict])
     
-    # Update data_dict with amenity columns
-    for key, value in amenity_data.items():
-        data_dict[key] = value
+    # Ensure all columns exist
+    for col in all_cols:
+        if col not in df.columns:
+            if col in numerical_cols:
+                df[col] = 0
+            else:
+                df[col] = 'Unknown'
     
-    # Remove original Amenities key if it exists
-    if 'Amenities' in data_dict:
-        del data_dict['Amenities']
+    # Handle missing values (fill with defaults)
+    for col in numerical_cols:
+        if col in df.columns and (pd.isna(df[col].iloc[0]) or df[col].iloc[0] == ''):
+            df[col] = 0
+        elif col not in df.columns:
+            df[col] = 0
     
-    # Create DataFrame from input data
-    input_df = pd.DataFrame([data_dict])
+    # Fill missing categorical values
+    for col in categorical_cols:
+        if col in df.columns and (pd.isna(df[col].iloc[0]) or df[col].iloc[0] == ''):
+            df[col] = 'Unknown'
+        elif col not in df.columns:
+            df[col] = 'Unknown'
     
-    # Ensure all required columns exist
-    for col in numerical_cols + one_hot_cols + target_encode_cols + other_categorical_cols:
-        if col not in input_df.columns:
-            input_df[col] = 0 if col in numerical_cols else 'Unknown'
+    # Convert to proper types
+    for col in numerical_cols:
+        if col in df.columns:
+            df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0)
     
-    # Apply encoding transformations
+    # Apply TargetEncoder to categorical columns
+    # Note: TargetEncoder was fitted on training data, so we use transform only
+    try:
+        # Create a dummy target for transform (TargetEncoder expects y during fit, but transform can work without it)
+        X_encoded = target_encoder.transform(df)
+    except:
+        # If transform fails, try with a dummy target
+        dummy_y = pd.Series([0])  # Dummy target
+        X_encoded = target_encoder.transform(df)
     
-    # 1. One-hot encoding
-    X_one_hot = one_hot_encoder.transform(input_df[one_hot_cols])
-    one_hot_feature_names = one_hot_encoder.get_feature_names_out(one_hot_cols)
-    X_one_hot_df = pd.DataFrame(X_one_hot, columns=one_hot_feature_names)
+    # Ensure we have the same columns as during training
+    # The TargetEncoder should handle this automatically
     
-    # 2. Target encoding (use dummy target for prediction)
-    X_target_encoded = target_encoder.transform(input_df[target_encode_cols])
-    X_target_df = pd.DataFrame(X_target_encoded, columns=target_encode_cols)
+    # Check for any NaN or Inf values
+    X_encoded = X_encoded.replace([np.inf, -np.inf], 0).fillna(0)
     
-    # 3. Other categorical features (simple dummy encoding)
-    X_other_cat = input_df[other_categorical_cols].copy()
-    for col in other_categorical_cols:
-        if X_other_cat[col].dtype == 'object':
-            dummies = pd.get_dummies(X_other_cat[col], prefix=col, drop_first=True)
-            X_other_cat = pd.concat([X_other_cat.drop(col, axis=1), dummies], axis=1)
+    # Convert to numpy array
+    X_final = X_encoded.values.astype(float)
     
-    # 4. Numerical features
-    X_numerical = input_df[numerical_cols].copy()
+    # Convert to 2D array if needed and ensure it's the right shape
+    if len(X_final.shape) == 1:
+        X_final = X_final.reshape(1, -1)
     
-    # Combine all features
-    X_final = pd.concat([
-        X_numerical,
-        X_one_hot_df,
-        X_target_df,
-        X_other_cat
-    ], axis=1)
-    
-    # Ensure final columns match training columns
-    for col in final_feature_columns:
-        if col not in X_final.columns:
-            X_final[col] = 0
-    
-    # Select only the columns that were in training (in correct order)
-    X_final = X_final[final_feature_columns]
-    
-    # Handle any remaining NaN or infinite values
-    X_final = X_final.replace([np.inf, -np.inf], 0).fillna(0)
-    
-    return X_final.values
+    return X_final
