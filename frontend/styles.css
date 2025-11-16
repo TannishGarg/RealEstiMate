@@ -924,6 +924,140 @@
     font-style: italic;
 }
 
+/* Multi-select Amenities Dropdown */
+.amenities-dropdown-container {
+    position: relative;
+    width: 100%;
+}
+
+.amenities-dropdown {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    border: 2px solid rgba(0, 0, 0, 0.08);
+    border-radius: var(--border-radius);
+    background: rgba(255, 255, 255, 0.9);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    min-height: 52px;
+}
+
+.amenities-dropdown:hover {
+    border-color: rgba(102, 126, 234, 0.3);
+}
+
+.amenities-dropdown.active {
+    border-color: #667eea;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    transform: translateY(-1px);
+}
+
+.amenities-selected {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    flex: 1;
+}
+
+.amenities-placeholder {
+    color: var(--text-light);
+    opacity: 0.7;
+    font-weight: 400;
+}
+
+.amenity-tag {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.amenity-tag .remove {
+    cursor: pointer;
+    font-weight: bold;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+.amenity-tag .remove:hover {
+    opacity: 1;
+}
+
+.amenities-arrow {
+    color: var(--text-light);
+    transition: transform 0.3s ease;
+    font-size: 0.75rem;
+}
+
+.amenities-dropdown.active .amenities-arrow {
+    transform: rotate(180deg);
+}
+
+.amenities-options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 2px solid #667eea;
+    border-top: none;
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+    box-shadow: var(--shadow-md);
+    z-index: 1000;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.amenities-options.show {
+    max-height: 300px;
+    overflow-y: auto;
+    opacity: 1;
+}
+
+.amenity-option {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1.25rem;
+    transition: background-color 0.2s ease;
+    cursor: pointer;
+}
+
+.amenity-option:hover {
+    background: rgba(102, 126, 234, 0.05);
+}
+
+.amenity-option input[type="checkbox"] {
+    margin-right: 0.75rem;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.amenity-option label {
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    color: var(--text-dark);
+    flex: 1;
+}
+
+.amenity-option input[type="checkbox"]:checked + label {
+    font-weight: 500;
+    color: #667eea;
+}
+
 .prediction-btn {
     width: 100%;
     padding: 1.2rem 2rem;

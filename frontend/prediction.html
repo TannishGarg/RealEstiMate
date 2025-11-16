@@ -89,7 +89,7 @@
                         <select id="Furnished_Status" name="Furnished_Status" required class="prediction-input">
                             <option value="">Select Status</option>
                             <option value="Furnished">Furnished</option>
-                            <option value="Semi-furnished">Semi-furnished</option>
+                            <option value="Semi-Furnished">Semi-Furnished</option>
                             <option value="Unfurnished">Unfurnished</option>
                         </select>
                     </div>
@@ -151,14 +151,37 @@
 
                     <div class="prediction-form-group">
                         <label for="Amenities" class="prediction-label">Amenities</label>
-                        <select id="Amenities" name="Amenities" required class="prediction-input">
-                            <option value="">Select Amenities Count</option>
-                            <option value="Club House">Club House</option>
-                            <option value="Gym">Gym</option>
-                            <option value="Playground">Playground</option>
-                            <option value="Pool">Pool</option>
-                            <option value="Garden">Garden</option>
-                        </select>
+                        <div class="amenities-dropdown-container">
+                            <div class="amenities-dropdown" id="amenitiesDropdown">
+                                <div class="amenities-selected" id="amenitiesSelected">
+                                    <span class="amenities-placeholder">Select amenities</span>
+                                </div>
+                                <div class="amenities-arrow">▼</div>
+                            </div>
+                            <div class="amenities-options" id="amenitiesOptions">
+                                <div class="amenity-option">
+                                    <input type="checkbox" id="amenity_gym" value="Gym">
+                                    <label for="amenity_gym">Gym</label>
+                                </div>
+                                <div class="amenity-option">
+                                    <input type="checkbox" id="amenity_playground" value="Playground">
+                                    <label for="amenity_playground">Playground</label>
+                                </div>
+                                <div class="amenity-option">
+                                    <input type="checkbox" id="amenity_clubhouse" value="Club House">
+                                    <label for="amenity_clubhouse">Club House</label>
+                                </div>
+                                <div class="amenity-option">
+                                    <input type="checkbox" id="amenity_pool" value="Pool">
+                                    <label for="amenity_pool">Pool</label>
+                                </div>
+                                <div class="amenity-option">
+                                    <input type="checkbox" id="amenity_garden" value="Garden">
+                                    <label for="amenity_garden">Garden</label>
+                                </div>
+                            </div>
+                            <input type="hidden" id="Amenities" name="Amenities" value="">
+                        </div>
                     </div>
 
                     <div class="prediction-form-group">
@@ -186,8 +209,8 @@
                         <label for="Availability_Status" class="prediction-label">Availability Status</label>
                         <select id="Availability_Status" name="Availability_Status" required class="prediction-input">
                             <option value="">Select Status</option>
-                            <option value="Ready_to_Move">Ready to Move</option>
-                            <option value="Under_Construction">Under Construction</option>
+                            <option value="Ready To Move">Ready to Move</option>
+                            <option value="Under Construction">Under Construction</option>
                         </select>
                     </div>
                 </div>

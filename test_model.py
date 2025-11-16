@@ -15,68 +15,67 @@ print(f"\nDataset shape: {df.shape}")
 # Test with a few different samples
 test_samples = [
     {
-        'State': 'Maharashtra',
-        'City': 'Pune',
-        'Locality': 'Locality_490',
-        'Property_Type': 'Apartment',
-        'BHK': 3,
-        'Size_in_SqFt': 2000,
-        'Furnished_Status': 'Furnished',
-        'Floor_No': 5,
-        'Total_Floors': 10,
-        'Age_of_Property': 5,
-        'Nearby_Schools': 5,
-        'Nearby_Hospitals': 3,
+        'State': 'Madhya Pradesh',
+        'City': 'Bhopal',
+        'Locality': 'MP Nagar',
+        'Property_Type': 'Independent House',
+        'BHK': 1,
+        'Size_in_SqFt': 624,
+        'Furnished_Status': 'Unfurnished',
+        'Floor_No': 0,
+        'Total_Floors': 1,
+        'Age_of_Property': 2,
+        'Nearby_Schools': 0,
+        'Nearby_Hospitals': 5,
         'Public_Transport_Accessibility': 'High',
-        'Parking_Space': 'Yes',
-        'Security': 'Yes',
-        'Amenities': 'Gym, Pool, Garden',
-        'Facing': 'North',
+        'Parking_Space': 'yes',
+        'Security': 'yes',
+        'Amenities': 'Club House, Gym, Playground, Pool',
+        'Facing': 'West',
         'Owner_Type': 'Owner',
-        'Availability_Status': 'Ready_to_Move'
+        'Availability_Status': 'Ready To Move'
     },
     {
-        'State': 'Karnataka',
-        'City': 'Bangalore',
-        'Locality': 'Locality_462',
-        'Property_Type': 'Villa',
-        'BHK': 4,
-        'Size_in_SqFt': 3500,
-        'Furnished_Status': 'Semi_Furnished',
-        'Floor_No': 2,
-        'Total_Floors': 3,
-        'Age_of_Property': 10,
-        'Nearby_Schools': 8,
-        'Nearby_Hospitals': 5,
-        'Public_Transport_Accessibility': 'Medium',
-        'Parking_Space': 'Yes',
-        'Security': 'Yes',
-        'Amenities': 'Gym, Pool, Garden, Clubhouse',
-        'Facing': 'East',
-        'Owner_Type': 'Builder',
-        'Availability_Status': 'Under_Construction',
-        'Amenities': 'Gym, Pool, Garden, Clubhouse'
+        'State': 'Chandigarh',
+        'City': 'Panchkula',
+        'Locality': 'MDC',
+        'Property_Type': 'Apartment',
+        'BHK': 2,
+        'Size_in_SqFt': 1386,
+        'Furnished_Status': 'Unfurnished',
+        'Floor_No': 7,
+        'Total_Floors': 29,
+        'Age_of_Property': 0,
+        'Nearby_Schools': 0,
+        'Nearby_Hospitals': 3,
+        'Public_Transport_Accessibility': 'High',
+        'Parking_Space': 'no',
+        'Security': 'no',
+        'Amenities': 'Club House, Gym, Playground, Pool',
+        'Facing': 'South',
+        'Owner_Type': 'Owner',
+        'Availability_Status': 'Ready To Move'
     },
     {
         'State': 'Delhi',
         'City': 'New Delhi',
-        'Locality': 'Locality_232',
-        'Property_Type': 'Independent House',
+        'Locality': 'Vasant Kunj',
+        'Property_Type': 'Apartment',
         'BHK': 2,
-        'Size_in_SqFt': 1500,
-        'Furnished_Status': 'Unfurnished',
-        'Floor_No': 1,
-        'Total_Floors': 2,
-        'Age_of_Property': 20,
-        'Nearby_Schools': 3,
-        'Nearby_Hospitals': 2,
-        'Public_Transport_Accessibility': 'Low',
-        'Parking_Space': 'No',
-        'Security': 'No',
-        'Amenities': 'Garden',
+        'Size_in_SqFt': 1171,
+        'Furnished_Status': 'Semi-Furnished',
+        'Floor_No': 5,
+        'Total_Floors': 26,
+        'Age_of_Property': 4,
+        'Nearby_Schools': 10,
+        'Nearby_Hospitals': 5,
+        'Public_Transport_Accessibility': 'High',
+        'Parking_Space': 'yes',
+        'Security': 'no',
+        'Amenities': 'Playground, Pool',
         'Facing': 'South',
-        'Owner_Type': 'Broker',
-        'Availability_Status': 'Ready_to_Move'
+        'Owner_Type': 'Owner',
+        'Availability_Status': 'Ready To Move'
     }
 ]
 
@@ -91,16 +90,28 @@ for i, sample in enumerate(test_samples, 1):
         sample_copy = sample.copy()
         
         # Normalize Availability_Status
-        if sample_copy['Availability_Status'] in ['Ready To Move', 'Ready to Move']:
-            sample_copy['Availability_Status'] = 'Ready_to_Move'
+        if sample_copy['Availability_Status'] in ['Ready To Move', 'Ready to Move', 'ready to move']:
+            sample_copy['Availability_Status'] = 'Ready_To_Move'
         
         # Normalize Furnished_Status
-        if sample_copy['Furnished_Status'] in ['Semi-Furnished', 'Semi-furnished']:
+        if sample_copy['Furnished_Status'] in ['Semi-Furnished', 'Semi-furnished', 'semi-furnished', 'semi furnished']:
             sample_copy['Furnished_Status'] = 'Semi_Furnished'
+        
+        # Normalize yes/no values to Yes/No
+        for col in ['Parking_Space', 'Security']:
+            if col in sample_copy:
+                val = str(sample_copy[col]).strip().lower()
+                sample_copy[col] = 'Yes' if val in ['yes', 'y'] else 'No'
         
         # Convert Amenities string to count
         if 'Amenities' in sample_copy and isinstance(sample_copy['Amenities'], str):
-            sample_copy['Amenities'] = len([a for a in sample_copy['Amenities'].split(',') if a.strip()])
+            amenities_str = sample_copy['Amenities']
+            if pd.isna(amenities_str) or amenities_str == '' or amenities_str == 'nan':
+                sample_copy['Amenities'] = 0
+            else:
+                sample_copy['Amenities'] = len([a.strip() for a in amenities_str.split(',') if a.strip()])
+        elif 'Amenities' not in sample_copy:
+            sample_copy['Amenities'] = 0
         
         X = preprocess_input(sample_copy)
         pred = model.predict(X)[0]
@@ -154,16 +165,23 @@ for idx, row in sample_df.iterrows():
         # Normalize the data to match training format
         availability = str(row['Availability_Status']).strip()
         if availability in ['Ready To Move', 'Ready to Move', 'ready to move']:
-            availability = 'Ready_to_Move'
+            availability = 'Ready_To_Move'
         
         furnished = str(row['Furnished_Status']).strip()
         if furnished in ['Semi-Furnished', 'Semi-furnished', 'semi-furnished', 'semi furnished']:
             furnished = 'Semi_Furnished'
         
+        # Normalize yes/no values
+        parking = str(row['Parking_Space']).strip().lower()
+        parking = 'Yes' if parking in ['yes', 'y'] else 'No'
+        
+        security = str(row['Security']).strip().lower()
+        security = 'Yes' if security in ['yes', 'y'] else 'No'
+        
         # Convert Amenities to count
         amenities = row['Amenities']
         if isinstance(amenities, str) and amenities.strip():
-            amenities_count = len([a for a in amenities.split(',') if a.strip()])
+            amenities_count = len([a.strip() for a in amenities.split(',') if a.strip()])
         else:
             amenities_count = 0
         
@@ -181,8 +199,8 @@ for idx, row in sample_df.iterrows():
             'Nearby_Schools': row['Nearby_Schools'],
             'Nearby_Hospitals': row['Nearby_Hospitals'],
             'Public_Transport_Accessibility': row['Public_Transport_Accessibility'],
-            'Parking_Space': row['Parking_Space'],
-            'Security': row['Security'],
+            'Parking_Space': parking,
+            'Security': security,
             'Amenities': amenities_count,
             'Facing': row['Facing'],
             'Owner_Type': row['Owner_Type'],

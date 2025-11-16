@@ -168,6 +168,9 @@ function setupEventListeners() {
         // Initialize on page load
         updateFloorNumberField();
     }
+    
+    // Initialize amenities dropdown
+    initializeAmenitiesDropdown();
 }
 
 // Load cities for selected state
@@ -341,6 +344,94 @@ function showSuccess(result) {
     // Scroll to result
     resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
+
+// Amenities Dropdown Functionality
+function initializeAmenitiesDropdown() {
+    const dropdown = document.getElementById('amenitiesDropdown');
+    const options = document.getElementById('amenitiesOptions');
+    const selectedDisplay = document.getElementById('amenitiesSelected');
+    const hiddenInput = document.getElementById('Amenities');
+    const checkboxes = options.querySelectorAll('input[type="checkbox"]');
+    
+    if (!dropdown || !options || !selectedDisplay || !hiddenInput) {
+        console.error('Amenities dropdown elements not found');
+        return;
+    }
+    
+    // Toggle dropdown
+    dropdown.addEventListener('click', function(e) {
+        if (e.target.type !== 'checkbox') {
+            e.preventDefault();
+            e.stopPropagation();
+            const isOpen = options.classList.contains('show');
+            
+            // Close all other dropdowns
+            document.querySelectorAll('.amenities-options.show').forEach(opt => {
+                opt.classList.remove('show');
+                opt.parentElement.querySelector('.amenities-dropdown').classList.remove('active');
+            });
+            
+            if (!isOpen) {
+                options.classList.add('show');
+                dropdown.classList.add('active');
+            }
+        }
+    });
+    
+    // Handle checkbox changes
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            updateSelectedAmenities();
+        });
+    });
+    
+    // Update selected amenities display
+    function updateSelectedAmenities() {
+        const selectedCheckboxes = options.querySelectorAll('input[type="checkbox"]:checked');
+        const selectedValues = Array.from(selectedCheckboxes).map(cb => cb.value);
+        
+        // Update hidden input
+        hiddenInput.value = selectedValues.join(', ');
+        
+        // Update display
+        if (selectedValues.length === 0) {
+            selectedDisplay.innerHTML = '<span class="amenities-placeholder">Select amenities</span>';
+        } else {
+            selectedDisplay.innerHTML = selectedValues.map(value => 
+                `<span class="amenity-tag">${value} <span class="remove" data-value="${value}">×</span></span>`
+            ).join('');
+            
+            // Add remove functionality
+            selectedDisplay.querySelectorAll('.remove').forEach(removeBtn => {
+                removeBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const value = this.getAttribute('data-value');
+                    const checkbox = options.querySelector(`input[value="${value}"]`);
+                    if (checkbox) {
+                        checkbox.checked = false;
+                        updateSelectedAmenities();
+                    }
+                });
+            });
+        }
+    }
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!dropdown.contains(e.target) && !options.contains(e.target)) {
+            options.classList.remove('show');
+            dropdown.classList.remove('active');
+        }
+    });
+    
+    // Prevent options from closing when clicking inside
+    options.addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
+}
+
+// Make amenities function globally available
+window.initializeAmenitiesDropdown = initializeAmenitiesDropdown;
 
 // Show error result
 function showError(message) {

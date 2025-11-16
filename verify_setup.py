@@ -25,12 +25,9 @@ print("2. Checking model files...")
 model_dir = 'model'
 required_model_files = [
     'model.pkl',
-    'label_encoders.pkl',
-    'onehot_encoder.pkl',
+    'target_encoder.pkl',
     'numerical_cols.pkl',
-    'high_cardinality.pkl',
-    'low_cardinality.pkl',
-    'ohe_feature_names.pkl',
+    'categorical_cols.pkl',
     'feature_order.pkl'
 ]
 
@@ -105,25 +102,25 @@ print("8. Testing preprocessing function...")
 try:
     from backend.preprocess import preprocess_input
     test_data = {
-        'State': 'Maharashtra',
-        'City': 'Mumbai',
-        'Locality': 'Andheri',
-        'Property_Type': 'Apartment',
-        'BHK': 2,
-        'Size_in_SqFt': 1000,
-        'Furnished_Status': 'Semi_Furnished',
-        'Floor_No': 5,
-        'Total_Floors': 10,
-        'Age_of_Property': 5,
-        'Nearby_Schools': 3,
-        'Nearby_Hospitals': 2,
+        'State': 'Madhya Pradesh',
+        'City': 'Bhopal',
+        'Locality': 'MP Nagar',
+        'Property_Type': 'Independent House',
+        'BHK': 1,
+        'Size_in_SqFt': 624,
+        'Furnished_Status': 'Unfurnished',
+        'Floor_No': 0,
+        'Total_Floors': 1,
+        'Age_of_Property': 2,
+        'Nearby_Schools': 0,
+        'Nearby_Hospitals': 5,
         'Public_Transport_Accessibility': 'High',
-        'Parking_Space': 'Yes',
-        'Security': 'Yes',
-        'Amenities': 3,
-        'Facing': 'North',
+        'Parking_Space': 'yes',
+        'Security': 'yes',
+        'Amenities': 'Club House, Gym, Playground, Pool',
+        'Facing': 'West',
         'Owner_Type': 'Owner',
-        'Availability_Status': 'Ready_to_Move'
+        'Availability_Status': 'Ready To Move'
     }
     X = preprocess_input(test_data)
     success.append(f"✓ Preprocessing works (output shape: {X.shape})")
@@ -137,25 +134,25 @@ try:
     import joblib
     model = joblib.load('model/model.pkl')
     test_data = {
-        'State': 'Maharashtra',
-        'City': 'Mumbai',
-        'Locality': 'Andheri',
-        'Property_Type': 'Apartment',
-        'BHK': 2,
-        'Size_in_SqFt': 1000,
-        'Furnished_Status': 'Semi_Furnished',
-        'Floor_No': 5,
-        'Total_Floors': 10,
-        'Age_of_Property': 5,
-        'Nearby_Schools': 3,
-        'Nearby_Hospitals': 2,
+        'State': 'Madhya Pradesh',
+        'City': 'Bhopal',
+        'Locality': 'MP Nagar',
+        'Property_Type': 'Independent House',
+        'BHK': 1,
+        'Size_in_SqFt': 624,
+        'Furnished_Status': 'Unfurnished',
+        'Floor_No': 0,
+        'Total_Floors': 1,
+        'Age_of_Property': 2,
+        'Nearby_Schools': 0,
+        'Nearby_Hospitals': 5,
         'Public_Transport_Accessibility': 'High',
-        'Parking_Space': 'Yes',
-        'Security': 'Yes',
-        'Amenities': 3,
-        'Facing': 'North',
+        'Parking_Space': 'yes',
+        'Security': 'yes',
+        'Amenities': 'Club House, Gym, Playground, Pool',
+        'Facing': 'West',
         'Owner_Type': 'Owner',
-        'Availability_Status': 'Ready_to_Move'
+        'Availability_Status': 'Ready To Move'
     }
     X = preprocess_input(test_data)
     prediction = model.predict(X)[0]

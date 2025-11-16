@@ -1,19 +1,16 @@
-from flask import Flask, request, jsonify, send_from_directory, session
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import joblib
 import os
 import pandas as pd
 import numpy as np
 from preprocess import preprocess_input
-from datetime import timedelta
 
 # Get the project root directory
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 frontend_path = os.path.join(project_root, 'frontend')
 
 app = Flask(__name__, static_folder=frontend_path)
-app.secret_key = 'homeprice_ai_secret_key_2025'  # Change this in production
-app.permanent_session_lifetime = timedelta(hours=24)
 CORS(app, supports_credentials=True)
 
 # Load model and preprocessing objects
@@ -69,8 +66,8 @@ def index():
 @app.route('/prediction.html')
 def prediction():
     """Serve the prediction page"""
-    if not session.get('logged_in'):
-        return send_from_directory(frontend_path, 'login.html')
+    # Note: Authentication is now handled by Firebase on the frontend
+    # This route no longer checks Flask sessions
     return send_from_directory(frontend_path, 'prediction.html')
 
 @app.route('/login.html')
@@ -93,47 +90,23 @@ def serve_static(path):
     """Serve static files (CSS, JS, etc.)"""
     return send_from_directory(frontend_path, path)
 
-@app.route('/api/login', methods=['POST'])
-def api_login():
-    """Handle user login"""
-    try:
-        data = request.json
-        email = data.get('email', '').strip()
-        password = data.get('password', '').strip()
-        
-        # Simple demo authentication (in production, use proper authentication)
-        if email and password:
-            # For demo purposes, accept any email/password combination
-            session.permanent = True
-            session['logged_in'] = True
-            session['user_email'] = email
-            return jsonify({
-                'success': True,
-                'message': 'Login successful'
-            })
-        else:
-            return jsonify({
-                'success': False,
-                'error': 'Email and password are required'
-            }), 400
-    except Exception as e:
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
+# Authentication is now handled by Firebase on the frontend
+# Flask login API routes are no longer needed
 
 @app.route('/api/check-auth', methods=['GET'])
 def check_auth():
     """Check if user is logged in"""
+    # Since Firebase handles authentication on the frontend,
+    # we return true to allow the frontend to proceed
     return jsonify({
-        'logged_in': session.get('logged_in', False),
-        'user_email': session.get('user_email', '')
+        'logged_in': True,
+        'user_email': ''
     })
 
 @app.route('/api/logout', methods=['POST'])
 def api_logout():
     """Handle user logout"""
-    session.clear()
+    # Firebase handles logout on the frontend
     return jsonify({
         'success': True,
         'message': 'Logged out successfully'
@@ -199,7 +172,7 @@ def predict():
             if 'Availability_Status' in input_data:
                 input_data['Availability_Status'] = str(input_data['Availability_Status']).strip()
                 if input_data['Availability_Status'] in ['Ready To Move', 'Ready to Move', 'ready to move']:
-                    input_data['Availability_Status'] = 'Ready_to_Move'
+                    input_data['Availability_Status'] = 'Ready_To_Move'
             
             # Normalize Furnished_Status
             if 'Furnished_Status' in input_data:
@@ -207,7 +180,7 @@ def predict():
                 if input_data['Furnished_Status'] in ['Semi-Furnished', 'Semi-furnished', 'semi-furnished', 'semi furnished']:
                     input_data['Furnished_Status'] = 'Semi_Furnished'
             
-            # Normalize yes/no values
+            # Normalize yes/no values to Yes/No
             for col in ['Parking_Space', 'Security']:
                 if col in input_data:
                     val = str(input_data[col]).strip().lower()
@@ -216,7 +189,7 @@ def predict():
             # Calculate Amenities_Count from Amenities string
             amenities = input_data.get('Amenities', '')
             if isinstance(amenities, str) and amenities.strip():
-                input_data['Amenities'] = len([a for a in amenities.split(',') if a.strip()])
+                input_data['Amenities'] = len([a.strip() for a in amenities.split(',') if a.strip()])
             else:
                 input_data['Amenities'] = 0
             

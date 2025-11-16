@@ -23,9 +23,9 @@ print("\n2. Normalizing text formatting...")
 # Normalize Availability_Status
 df['Availability_Status'] = df['Availability_Status'].str.strip()
 df['Availability_Status'] = df['Availability_Status'].replace({
-    'Ready To Move': 'Ready_to_Move',
-    'Ready to Move': 'Ready_to_Move',
-    'ready to move': 'Ready_to_Move'
+    'Ready To Move': 'Ready_To_Move',
+    'Ready to Move': 'Ready_To_Move',
+    'ready to move': 'Ready_To_Move'
 })
 
 # Normalize Furnished_Status
@@ -179,6 +179,26 @@ print(f"  Train R²: {train_r2:.4f}")
 print(f"  Test R²: {test_r2:.4f}")
 print(f"  Train MAE: {train_mae:.2f} Lakhs")
 print(f"  Test MAE: {test_mae:.2f} Lakhs")
+
+
+# -------------------------
+# 10. SHAP Analysis
+# -------------------------
+print("\n10. Running SHAP Analysis...")
+
+import shap
+# Only sample 2000 rows if dataset is large (prevents slow computation)
+sample_size = min(2000, len(X_train))
+X_sample = X_train.sample(sample_size, random_state=42)
+# Create SHAP explainer for XGBoost
+explainer = shap.TreeExplainer(model)
+# Compute SHAP values
+shap_values = explainer.shap_values(X_sample)
+print("Generating SHAP summary plot...")
+# Display SHAP plot
+shap.summary_plot(shap_values, X_sample, show=True)
+print("SHAP analysis completed.")
+
 
 # Save model and preprocessing objects
 print("\n9. Saving model and preprocessing objects...")
