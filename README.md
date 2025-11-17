@@ -6,8 +6,28 @@ A sophisticated web application for predicting house prices using advanced machi
 
 RealEstiMate leverages machine learning to provide accurate house price predictions across India. The platform analyzes multiple factors including location, property specifications, amenities, and nearby facilities to deliver reliable price estimates.
 
-## Features
+## ScreenShots
+**Landing Page:**
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/e60f0c34-f82e-4dca-9988-f84fded09530" />
 
+**Login/Signup Page:**
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/4ea04a85-5912-473e-99ff-3826bd817951" />
+
+**About Page:**
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/cbac6986-bcb1-424c-a57a-5c665f0a64ea" />
+
+**Contact Page:**
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/c665dce5-2bfe-48cb-94b6-34bdcce30dc6" />
+
+**Prediction Page:**
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/177e8cc3-9fb1-42ee-881a-82074c92926a" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/b5ef5bd1-6d5e-4c88-861c-470c793e1dce" />
+
+
+## DashBoard
+<img width="1487" height="830" alt="image" src="https://github.com/user-attachments/assets/cc471a67-8f40-4cdc-8062-46815db12352" />
+
+## Features
 ### Core Functionality
 - **Advanced Price Prediction**: XGBoost-powered ML model with 91.86% accuracy
 - **Comprehensive Location Support**: Multi-level location selection (State → City → Locality)
